@@ -1,5 +1,5 @@
 import conta
 
-conta.criar_conta()
-conta.realizar_deposito()
-conta.realizar_saque()
+conta.criar_conta(input().split(),input(), 0.00)
+conta.realizar_deposito(float(input()))
+conta.realizar_saque(float(input()))
