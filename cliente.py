@@ -1,10 +1,8 @@
-# dados pessoais do cliente
+# dados pessoais do cliente;
 
-def nomes_do_usuario(nome):
-  return nome
+# cada variavel está atribuindo ao usuario seus respectivos valores pessoais
+nome_do_usuario = nome
 
-def Senhas_do_usuario(senhas):
-  return senhas
+senha_do_usuario = senha
 
-def cpf_do_usuario(cpf):
-  return cpf
+cpf_do_usuario = cpf
