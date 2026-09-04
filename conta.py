@@ -1,4 +1,9 @@
 #account_atributo para atributo da conta.
+account_name = ""
+account_password = ""
+account_balance = 0
+
+#atribuir valores
 def criar_conta(nome, senha, saldo):
     account_name = nome
     account_password = senha
