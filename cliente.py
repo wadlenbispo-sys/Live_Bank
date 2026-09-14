@@ -17,6 +17,6 @@ def user_cpf(cpf_do_usuario):
 def user_idade(idade_do_cliente):
   
   if idade_do_cliente >= 18:
-     return  idade_do_cliente,"idade valida"
+     return  "idade valida"
   else :
      return "idade fora das condições, voce pode ser menor de idade!!"
