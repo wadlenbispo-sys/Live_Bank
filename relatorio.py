@@ -1,25 +1,78 @@
-# responsavel pelo relatorio geral e por cada agencia, também é responsavel por soma o total de saldos
-def relatorio_do_banco(agencia_escolhida):
-    montante_total__do_banco = sum(lista_saldos)
+# Relatório geral do Live_Bank
+# Lê os arquivos JSON gerados pelos outros módulos e exibe um resumo formatado
 
-   # calcula o montante da agencia informada
-    montante_agencia = 0
-    total_cliente_da_agencia = 0
-    # Vai percorre a lista de agencias usando a posição para achar o saldo correto
-    for agencias in (len(lista_agencias)):
-        if lista_agencias[i] == agencia_alvo:
-           montante_agencia += lista_saldos[i]
-           total_clientes_agencia += 1
-    # Exibir o relatório com os dados dos montantes,contas,agencias e o total de contas no banco na tela
-    print("\n" + "="*30)
-    print("===== RELATÓRIO BANCÁRIO =====")
-    print("="*30)
-    print(f"Montante total do banco: R$ {agencia_escolhida}")
-    print(f"Total de contas no banco: {len(lista_saldos)}")
-    print("-"*30)
-    print(f"Agencia pesquisada: {agencia_escolhida}")
-    print(f"Montante da Agencia: R$ {montante_agencia}")
-    print(f"Contas nesta Agencia: {total_clientes_agencia}")
-    print(f"="*30 + "\n")
-  
-    
+import json
+
+
+def carregar_json(nome_arquivo):
+    """Lê um arquivo JSON na pasta do projeto. Retorna lista vazia se não existir ou estiver vazio/corrompido."""
+    try:
+        with open(nome_arquivo, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
+
+
+def relatorio_clientes():
+    nomes = carregar_json('nomes.json')
+    cpfs = carregar_json('cpfs.json')
+
+    print('\n--- Clientes cadastrados ---')
+    if not nomes:
+        print('Nenhum cliente cadastrado.')
+        return
+
+    for i, nome in enumerate(nomes):
+        cpf = cpfs[i] if i < len(cpfs) else 'N/A'
+        print(f'{i + 1}. {nome} - CPF: {cpf}')
+
+
+def relatorio_agencias():
+    cnpjs = carregar_json('cnpjs.json')
+    codigos = carregar_json('codigo_agencia.json')
+
+    print('\n--- Agências cadastradas ---')
+    if not cnpjs:
+        print('Nenhuma agência cadastrada.')
+        return
+
+    for i, cnpj in enumerate(cnpjs):
+        codigo = codigos[i] if i < len(codigos) else 'N/A'
+        print(f'{i + 1}. CNPJ: {cnpj} - Código: {codigo}')
+
+
+def relatorio_contas():
+    numeros = carregar_json('numero_contas.json')
+    agencias = carregar_json('agencias.json')
+    saldos = carregar_json('saldos.json')
+
+    print('\n--- Contas cadastradas ---')
+    if not numeros:
+        print('Nenhuma conta cadastrada.')
+        return
+
+    total_banco = 0
+    total_por_agencia = {}
+
+    for i, numero in enumerate(numeros):
+        agencia = agencias[i] if i < len(agencias) else 'N/A'
+        saldo = saldos[i] if i < len(saldos) else 0
+        total_banco += saldo
+        total_por_agencia[agencia] = total_por_agencia.get(agencia, 0) + saldo
+        print(f'{i + 1}. Conta: {numero} - Agência: {agencia} - Saldo: R$ {saldo:.2f}')
+
+    print('\n--- Montante por agência ---')
+    for agencia, total_agencia in total_por_agencia.items():
+        print(f'Agência {agencia}: R$ {total_agencia:.2f}')
+
+    print(f'\nMontante total do banco: R$ {total_banco:.2f}')
+
+
+def gerar_relatorio_completo():
+    print('=' * 55)
+    print('RELATÓRIO GERAL - LIVE_BANK')
+    print('=' * 55)
+    relatorio_clientes()
+    relatorio_agencias()
+    relatorio_contas()
+    print('=' * 55)
