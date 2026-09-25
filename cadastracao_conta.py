@@ -40,7 +40,17 @@ def transferencia(posição_de_envio,posição_do_recebo,valor_de_transferencia)
         lista_saldos[posição_de_envio] -= valor_de_transferencia
         lista_saldos[posição_do_recebo] += valor_de_transferencia
         return "transferência concluída!"
-        
+
+# responsavel por fazer consultar do saldo através da buscar por posição
+def consultar_saldo(posição_do_cliente):
+    nome_do_cliente = lista_nomes[posição_do_cliente]
+    saldo_atual = lista_saldos[posição_do_cliente]
+
+    print("\n" + "-"*30)
+    print(f"Cliente: {nome_do_cliente}")
+    print(f"Saldo disponível: R$ {saldo_atual}")
+    print("-"*30 + "\n")
+    
 # salvar em formato json
 import json
 def salvar_dados():
