@@ -1,7 +1,7 @@
 lista_numero_contas = []
 lista_agencias = []
 lista_saldos = []
-
+# responsavel por cadastra conta do cliente
 def cadastracao_contas(numero_conta,agencia,saldo):
     if numero_conta in lista_numero_contas:
        return False
@@ -10,7 +10,34 @@ def cadastracao_contas(numero_conta,agencia,saldo):
       lista_agencias.append(agencia)
       lista_saldos.append(saldo)
       return True
-
+        
+# responsavel por realizar o saque        
+def saque(valor_atual,valor_de_saque):
+    if valor_de_saque <= 0:
+        return "Não houver saque!"
+    else:
+        novo_valor = valor_atual - valor_de_saque
+        return "saque feito!"
+             
+lista_deposito = []        
+# responsavel por realizar deposito
+def deposito(valor_atual,valor_do_deposito):
+    if valor_do_deposito <= 0:
+       return "Não houver depósito"
+    else:
+       novo_valor = valor_atual + valor_do_deposito
+       lista_deposito.append(novo_valor)
+       return "depósito realizado"
+        
+# responsavel por realizar transferencia
+def transferencia(valor_atual,valor_de_transferencia):
+    if valor_de_transferencia > valor_atual:
+       return "!erro: você tentou transferir um valor maior do que o valor atual"
+    else:
+        valor_novo = valor_atual - valor_de_transferencia
+        return "transferência concluída!"
+        
+# salvar em formato json
 import json
 def salvar_dados():
    with open('numero_contas.json', 'w', encoding="utf-8") as f:
