@@ -12,29 +12,33 @@ def cadastracao_contas(numero_conta,agencia,saldo):
       return True
         
 # responsavel por realizar o saque        
-def saque(valor_atual,valor_de_saque):
+def saque(posição_do_cliente,valor_de_saque):
     if valor_de_saque <= 0:
         return "Não houver saque!"
+    if valor_de_saque > lista_saldos[posição_do_cliente]:
+        return "saldo insuficiente!"
     else:
-        novo_valor = valor_atual -= valor_de_saque
-        return "saque feito!"
+        novo_valor[posição_do_cliente] -= valor_de_saque
+        return f"Seu saque de: R${valor_de_saque} foi realizado!"
              
-lista_deposito = []        
+      
 # responsavel por realizar deposito
-def deposito(valor_atual,valor_do_deposito):
+def deposito(posição_do_cliente,valor_do_deposito):
     if valor_do_deposito <= 0:
        return "Não houver depósito"
     else:
-       novo_valor = valor_atual += valor_do_deposito
-       lista_deposito.append(novo_valor)
-       return "depósito realizado"
+       lista_saldos[posição_do_cliente] += valor_do_deposito
+       return f"Seu depósito de: R${valor_do_deposito} foi realizado!onde "
         
 # responsavel por realizar transferencia
-def transferencia(valor_atual,valor_de_transferencia):
-    if valor_de_transferencia > valor_atual:
+def transferencia(posição_de_envio,posição_do_recebo,valor_de_transferencia):
+    if valor_de_transferencia <= 0:
+        return "ocorreu um erro!.tente enviar um valor positivo!"
+    if valor_de_transferencia > lista_saldos[posição_de_envio]:
        return "!erro: você tentou transferir um valor maior do que o valor atual"
     else:
-        valor_novo = valor_atual -= valor_de_transferencia
+        lista_saldos[posição_de_envio] -= valor_de_transferencia
+        lista_saldos[posição_do_recebo] += valor_de_transferencia
         return "transferência concluída!"
         
 # salvar em formato json
