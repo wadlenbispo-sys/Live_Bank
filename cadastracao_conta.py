@@ -16,7 +16,7 @@ def saque(valor_atual,valor_de_saque):
     if valor_de_saque <= 0:
         return "Não houver saque!"
     else:
-        novo_valor = valor_atual - valor_de_saque
+        novo_valor = valor_atual -= valor_de_saque
         return "saque feito!"
              
 lista_deposito = []        
@@ -25,7 +25,7 @@ def deposito(valor_atual,valor_do_deposito):
     if valor_do_deposito <= 0:
        return "Não houver depósito"
     else:
-       novo_valor = valor_atual + valor_do_deposito
+       novo_valor = valor_atual += valor_do_deposito
        lista_deposito.append(novo_valor)
        return "depósito realizado"
         
