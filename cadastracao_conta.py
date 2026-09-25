@@ -34,7 +34,7 @@ def transferencia(valor_atual,valor_de_transferencia):
     if valor_de_transferencia > valor_atual:
        return "!erro: você tentou transferir um valor maior do que o valor atual"
     else:
-        valor_novo = valor_atual - valor_de_transferencia
+        valor_novo = valor_atual -= valor_de_transferencia
         return "transferência concluída!"
         
 # salvar em formato json
