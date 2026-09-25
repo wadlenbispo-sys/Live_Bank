@@ -12,45 +12,43 @@ def cadastracao_contas(numero_conta,agencia,saldo):
       return True
         
 # responsavel por realizar o saque        
-def saque(posição_do_cliente,valor_de_saque):
+def saque(numero_conta,valor_de_saque):
+    if numero_conta not in lista_numero_contas:
+        return "Conta não encontrada!"
+    indice = lista_numero_contas.index(numero_conta)
     if valor_de_saque <= 0:
-        return "Não houver saque!"
-    if valor_de_saque > lista_saldos[posição_do_cliente]:
-        return "saldo insuficiente!"
-    else:
-        novo_valor[posição_do_cliente] -= valor_de_saque
-        return f"Seu saque de: R${valor_de_saque} foi realizado!"
-             
-      
+        return "Não houve saque!"
+    if valor_de_saque > lista_saldos[indice]:
+        return "Saldo insuficiente!"
+    lista_saldos[indice] -= valor_de_saque
+    return "Saque realizado!"
+
 # responsavel por realizar deposito
-def deposito(posição_do_cliente,valor_do_deposito):
+def deposito(numero_conta,valor_do_deposito):
+    if numero_conta not in lista_numero_contas:
+        return "Conta não encontrada!"
+    indice = lista_numero_contas.index(numero_conta)
     if valor_do_deposito <= 0:
-       return "Não houver depósito"
-    else:
-       lista_saldos[posição_do_cliente] += valor_do_deposito
-       return f"Seu depósito de: R${valor_do_deposito} foi realizado!onde "
+       return "Não houve depósito!"
+    lista_saldos[indice] += valor_do_deposito
+    return "Depósito realizado!"
         
 # responsavel por realizar transferencia
-def transferencia(posição_de_envio,posição_do_recebo,valor_de_transferencia):
-    if valor_de_transferencia <= 0:
-        return "ocorreu um erro!.tente enviar um valor positivo!"
-    if valor_de_transferencia > lista_saldos[posição_de_envio]:
-       return "!erro: você tentou transferir um valor maior do que o valor atual"
-    else:
-        lista_saldos[posição_de_envio] -= valor_de_transferencia
-        lista_saldos[posição_do_recebo] += valor_de_transferencia
-        return "transferência concluída!"
-
-# responsavel por fazer consultar do saldo através da buscar por posição
-def consultar_saldo(posição_do_cliente):
-    nome_do_cliente = lista_nomes[posição_do_cliente]
-    saldo_atual = lista_saldos[posição_do_cliente]
-
-    print("\n" + "-"*30)
-    print(f"Cliente: {nome_do_cliente}")
-    print(f"Saldo disponível: R$ {saldo_atual}")
-    print("-"*30 + "\n")
+def transferencia(numero_conta_origem,numero_conta_destino,valor_de_transferencia):
+    if numero_conta_origem not in lista_numero_contas or numero_conta_destino not in lista_numero_contas:
+        return "Conta não encontrada!"
+    indice_origem = lista_numero_contas.index(numero_conta_origem)
+    indice_destino = lista_numero_contas.index(numero_conta_destino)
     
+    if valor_de_transferencia <= 0:
+        return "Valor de transferência inválido!"
+    
+    if valor_de_transferencia > lista_saldos[indice_origem]:
+       return "!erro: você tentou transferir um valor maior do que o valor atual"
+    lista_saldos[indice_origem] -= valor_de_transferencia
+    lista_saldos[indice_destino] += valor_de_transferencia
+    return "transferência concluída!"
+        
 # salvar em formato json
 import json
 def salvar_dados():
