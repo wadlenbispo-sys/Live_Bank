@@ -1,13 +1,19 @@
 import json
 
-lista_cnpjs = []
+lista_agencias = {}
+
 
 def numero_cnpj(cadastro):
-    while cadastro in lista_cnpjs:
+    cadastro = str(cadastro)
+    while cadastro in lista_agencias:
         cadastro = input('Código já cadastrado, digite outro código: ')
-    lista_cnpjs.append(cadastro)
+    lista_agencias[cadastro] = {'codigo': cadastro}
     return True
 
+
 def salvar_dados():
-    with open('codigo_agencia.json', 'w', encoding="utf-8") as f:
-        json.dump(lista_cnpjs, f, indent=2)
+    with open('agencias_cadastradas.json', 'w', encoding='utf-8') as f:
+        json.dump(lista_agencias, f, indent=2, ensure_ascii=False)
+
+    with open('codigo_agencia.json', 'w', encoding='utf-8') as f:
+        json.dump(list(lista_agencias.keys()), f, indent=2, ensure_ascii=False)
