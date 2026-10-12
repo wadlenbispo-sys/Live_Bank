@@ -3,7 +3,6 @@
 
 import json
 
-
 def carregar_arquivo_json(nome_arquivo):
     """Lê um arquivo JSON. Retorna {} se não existir ou estiver vazio/corrompido."""
     try:
@@ -15,7 +14,7 @@ def carregar_arquivo_json(nome_arquivo):
 
 
 def relatorio_clientes():
-    clientes = carregar_arquivo_json('lista_clientes.json')
+    clientes = carregar_arquivo_json('clientes.json')
 
     print('\n--- Clientes cadastrados ---')
     if not clientes:
@@ -37,33 +36,35 @@ def relatorio_agencias():
     for i, (cnpj, dados) in enumerate(agencias.items(), start=1):
         print(f"{i}. CNPJ: {cnpj} - Código: {dados.get('codigo', 'N/A')}")
 
-
 def relatorio_contas():
-    contas = carregar_arquivo_json('contas_correntes.json')
+    contas_poupanca = carregar_arquivo_json('contas_poupanca.json')
+    contas_correntes = carregar_arquivo_json('contas_correntes.json')
+    contas_salario = carregar_arquivo_json('contas_salario.json')
 
     print('\n--- Contas cadastradas ---')
-    if not contas:
+    if not (contas_poupanca or contas_correntes or contas_salario):
         print('Nenhuma conta cadastrada.')
         return
+    print('\nContas Poupança:')
+    if contas_poupanca:
+        for i, (cnpj, dados) in enumerate(contas_poupanca.items(), start=1):
+            print(f"{i}. CNPJ: {cnpj} - Código: {dados.get('Codigo', 'N/A')} - Saldo: {dados.get('Saldo', 0.0)}")
+    else:
+        print('Nenhuma conta poupança cadastrada.')
 
-    total_banco = 0
-    total_por_agencia = {}
+    print('\nContas Correntes:')
+    if contas_correntes:
+        for i, (cnpj, dados) in enumerate(contas_correntes.items(), start=1):
+            print(f"{i}. CNPJ: {cnpj} - Código: {dados.get('Codigo', 'N/A')} - Saldo: {dados.get('Saldo', 0.0)}")
+    else:
+        print('Nenhuma conta corrente cadastrada.')
 
-    for i, (numero, dados) in enumerate(contas.items(), start=1):
-        agencia = dados.get('agencia', 'N/A')
-        saldo = float(dados.get('saldo', 0))
-        tipo = dados.get('tipo', 'corrente')
-
-        total_banco += saldo
-        total_por_agencia[agencia] = total_por_agencia.get(agencia, 0) + saldo
-        print(f'{i}. Conta {tipo}: {numero} - Agência: {agencia} - Saldo: R$ {saldo:.2f}')
-
-    print('\n--- Montante por agência ---')
-    for agencia, total_agencia in total_por_agencia.items():
-        print(f'Agência {agencia}: R$ {total_agencia:.2f}')
-
-    print(f'\nMontante total do banco: R$ {total_banco:.2f}')
-
+    print('\nContas Salário:')
+    if contas_salario:
+        for i, (cnpj, dados) in enumerate(contas_salario.items(), start=1):
+            print(f"{i}. CNPJ: {cnpj} - Código: {dados.get('Codigo', 'N/A')} - Saldo: {dados.get('Saldo', 0.0)}")
+    else:
+        print('Nenhuma conta salário cadastrada.')
 
 def gerar_relatorio_completo():
     print('=' * 55)

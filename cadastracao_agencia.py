@@ -1,6 +1,6 @@
 import json
 
-ARQUIVO = 'agencias_cadastradas.json'
+ARQUIVO = 'agencias.json'
 
 def carregar_dados():
     """Lê o JSON ao iniciar. Retorna {} se estiver vazio/corrompido."""
@@ -13,11 +13,13 @@ def carregar_dados():
     
 lista_agencias = carregar_dados()
 
-def numero_cnpj(cadastro,codigo):
-    cadastro = str(cadastro)
-    while cadastro in lista_agencias:
-        cadastro = input('Código já cadastrado, digite outro código: ')
-    lista_agencias[cadastro] = {'codigo': codigo}
+def cadastra_agencia(nome,cpf,cnpj, codigo, cidade=None, estado=None):
+    """Cadastra a agência. Retorna False se o CNPJ ou o código já existirem."""
+    cnpj = str(cnpj)
+    codigo = str(codigo)
+    if cnpj in lista_agencias or any(dados['Codigo'] == codigo for dados in lista_agencias.values()):
+        return False
+    lista_agencias[cpf] = {'CNPJ do Sócio': cnpj, 'Nome do Sócio': nome, 'Codigo': codigo, 'Cidade': cidade, 'Estado': estado}
     return True
 
 def salvar_dados():
