@@ -1,83 +1,64 @@
+# Cadastro de agências: a chave é o CNPJ e o código fica dentro do dicionário
 import json
 
-lista_contas = {}
+ARQUIVO = 'agencias_cadastradas.json'
 
 
-# responsavel por cadastra conta do cliente
-def cadastracao_contas(numero_conta, agencia, saldo):
-    numero_conta = str(numero_conta)
-    if numero_conta in lista_contas:
+def carregar_dados():
+    """Lê o JSON ao iniciar. Retorna {} se não existir ou estiver inválido."""
+    try:
+        with open(ARQUIVO, 'r', encoding='utf-8') as f:
+            dados = json.load(f)
+            return dados if isinstance(dados, dict) else {}
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+
+lista_agencias = carregar_dados()
+
+
+def codigo_existe(codigo):
+    """Retorna True se já existe uma agência com esse código."""
+    codigo = str(codigo)
+    return any(dados['codigo'] == codigo for dados in lista_agencias.values())
+
+
+def cadastra_agencia(cnpj, codigo):
+    """Cadastra a agência. Retorna False se o CNPJ ou o código já existirem."""
+    cnpj = str(cnpj)
+    codigo = str(codigo)
+    if cnpj in lista_agencias or codigo_existe(codigo):
         return False
 
-    lista_contas[numero_conta] = {
-        'agencia': agencia,
-        'saldo': float(saldo)
-    }
+    lista_agencias[cnpj] = {'codigo': codigo}
     return True
 
+def aplicar_rendimento(cnpj, taxa):
+    """Aplica rendimento a todas as contas da agência especificada."""
+    cnpj = str(cnpj)
+    if cnpj not in lista_agencias:
+        print("Agência não encontrada.")
+        return
 
-# responsavel por realizar o saque
-def saque(numero_conta, valor_de_saque):
-    numero_conta = str(numero_conta)
-    if numero_conta not in lista_contas:
-        return 'Conta não encontrada!'
+    # Carregar contas correntes
+    try:
+        with open('contas_correntes.json', 'r', encoding='utf-8') as f:
+            contas = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("Não há contas cadastradas.")
+        return
 
-    conta = lista_contas[numero_conta]
-    if valor_de_saque <= 0:
-        return 'Não houve saque!'
-    if valor_de_saque > conta['saldo']:
-        return 'Saldo insuficiente!'
+    # Aplicar rendimento
+    for numero, dados in contas.items():
+        if dados.get('agencia') == cnpj:
+            saldo_atual = float(dados.get('saldo', 0))
+            novo_saldo = saldo_atual * (1 + taxa / 100)
+            dados['saldo'] = round(novo_saldo, 2)
 
-    conta['saldo'] -= valor_de_saque
-    return 'Saque realizado!'
-
-
-# responsavel por realizar deposito
-def deposito(numero_conta, valor_do_deposito):
-    numero_conta = str(numero_conta)
-    if numero_conta not in lista_contas:
-        return 'Conta não encontrada!'
-
-    conta = lista_contas[numero_conta]
-    if valor_do_deposito <= 0:
-        return 'Não houve depósito!'
-
-    conta['saldo'] += valor_do_deposito
-    return 'Depósito realizado!'
-
-
-# responsavel por realizar transferencia
-def transferencia(numero_conta_origem, numero_conta_destino, valor_de_transferencia):
-    numero_conta_origem = str(numero_conta_origem)
-    numero_conta_destino = str(numero_conta_destino)
-
-    if numero_conta_origem not in lista_contas or numero_conta_destino not in lista_contas:
-        return 'Conta não encontrada!'
-
-    origem = lista_contas[numero_conta_origem]
-    destino = lista_contas[numero_conta_destino]
-
-    if valor_de_transferencia <= 0:
-        return 'Valor de transferência inválido!'
-
-    if valor_de_transferencia > origem['saldo']:
-        return '!erro: você tentou transferir um valor maior do que o valor atual'
-
-    origem['saldo'] -= valor_de_transferencia
-    destino['saldo'] += valor_de_transferencia
-    return 'transferência concluída!'
-
-
-# salvar em formato json
+    # Salvar contas atualizadas
+    with open('contas_correntes.json', 'w', encoding='utf-8') as f:
+        json.dump(contas, f, indent=2, ensure_ascii=False)
+        
 def salvar_dados():
-    with open('contas.json', 'w', encoding='utf-8') as f:
-        json.dump(lista_contas, f, indent=2, ensure_ascii=False)
-
-    with open('numero_contas.json', 'w', encoding='utf-8') as f:
-        json.dump(list(lista_contas.keys()), f, indent=2, ensure_ascii=False)
-
-    with open('agencias.json', 'w', encoding='utf-8') as f:
-        json.dump({numero: dados['agencia'] for numero, dados in lista_contas.items()}, f, indent=2, ensure_ascii=False)
-
-    with open('saldos.json', 'w', encoding='utf-8') as f:
-        json.dump({numero: dados['saldo'] for numero, dados in lista_contas.items()}, f, indent=2, ensure_ascii=False)
+    with open(ARQUIVO, 'w', encoding='utf-8') as f:
+        json.dump(lista_agencias, f, indent=2, ensure_ascii=False)
