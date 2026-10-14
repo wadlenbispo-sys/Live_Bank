@@ -48,6 +48,14 @@ def transferencia(numero_conta_origem,numero_conta_destino,valor_de_transferenci
     lista_saldos[indice_origem] -= valor_de_transferencia
     lista_saldos[indice_destino] += valor_de_transferencia
     return "transferência concluída!"
+
+#listar contas com saldo positivo
+def listar_positivos():
+    lista_positivos = []
+    for i in range(len(lista_numero_contas)):
+        if lista_saldos[i] > 0:
+            lista_positivos.append((lista_numero_contas[i], lista_agencias[i], lista_saldos[i]))
+    return lista_positivos
         
 # salvar em formato json
 import json

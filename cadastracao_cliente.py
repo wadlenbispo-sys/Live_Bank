@@ -12,6 +12,13 @@ def cadastra_cliente(nome,senha,cpf):
       lista_cpfs.append(cpf)
       return True
 
+#Listar clientes cadastrados
+def listar_clientes():
+    lista_clientes = set()
+    for i in range(len(lista_nomes)):
+        lista_clientes.add((lista_nomes[i], {"senha": lista_senhas[i], "cpf": lista_cpfs[i]}))
+    return lista_clientes
+
 
 import json
 def salvar_dados():
