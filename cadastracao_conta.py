@@ -1,3 +1,5 @@
+from functools import reduce
+
 lista_numero_contas = []
 lista_agencias = []
 lista_saldos = []
@@ -49,14 +51,25 @@ def transferencia(numero_conta_origem,numero_conta_destino,valor_de_transferenci
     lista_saldos[indice_destino] += valor_de_transferencia
     return "transferência concluída!"
 
-#listar contas com saldo positivo
+#lista contas com saldo positivo
 def listar_positivos():
-    lista_positivos = []
-    for i in range(len(lista_numero_contas)):
-        if lista_saldos[i] > 0:
-            lista_positivos.append((lista_numero_contas[i], lista_agencias[i], lista_saldos[i]))
+    lista_positivos = [x for x in lista_numero_contas if lista_saldos[lista_numero_contas.index(x)] > 0]
     return lista_positivos
-        
+
+#saldo total do banco
+def saldo_total():
+    total = reduce(lambda x, y: x + y, lista_saldos)
+    return total
+
+#buscar maior ou menor saldo
+def maior():
+    return max(lista_saldos)
+def menor():
+    return min(lista_saldos)
+''' especificar se quer buscar o maior ou menor saldo ao chamar a função. '''
+def buscar_saldo(MouM):
+    return lista_numero_contas[lista_saldos.index(MouM)], MouM
+
 # salvar em formato json
 import json
 def salvar_dados():

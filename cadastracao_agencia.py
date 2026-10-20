@@ -10,9 +10,7 @@ def numero_cnpj(cadastro):
 
 #listar agencias cadastradas
 def listar_agencias():
-    lista_agencias = set()
-    for i in range(len(lista_cnpjs)):
-        lista_agencias.add((lista_cnpjs[i]))
+    lista_agencias = {i for i in lista_cnpjs}
     return lista_agencias
 
 def salvar_dados():
