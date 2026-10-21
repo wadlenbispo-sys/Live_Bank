@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block titulo %}Clientes{% endblock %}
+{% block conteudo %}
+    <h2>Cadastrar cliente</h2>
+    <form class="cadastro" action="{{ url_for('cadastrar_cliente') }}" method="POST">
+        <input type="text" name="nome" placeholder="Nome" required>
+        <input type="text" name="cpf" placeholder="CPF" required>
+        <input type="password" name="senha" placeholder="Senha ('Preencher:')" minlength="4" maxlength="15" required>
+        <input type="text" name="cidade" placeholder="Cidade" required>
+        <input type="text" name="estado" placeholder="UF" maxlength="2" required>
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <h2>Clientes cadastrados</h2>
+    {% if clientes %}
+    <table>
+        <thead>
+            <tr><th>Nome</th><th>CPF</th><th>Naturalidade</th><th>Ações</th></tr>
+        </thead>
+        <tbody>
+            {% for cpf, cliente in clientes.items() %}
+            <tr>
+                <td>{{ cliente.nome }}</td>
+                <td>{{ cpf|cpf }}</td>
+                <td>{{ cliente.cidade }} - {{ cliente.estado }}</td>
+                <td>
+                    <form action="{{ url_for('deletar_cliente', cpf=cpf) }}" method="POST">
+                        <button type="submit" class="excluir">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="vazio">Nenhum cliente cadastrado.</p>
+    {% endif %}
+{% endblock %}

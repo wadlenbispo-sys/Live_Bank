@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block titulo %}Agências{% endblock %}
+{% block conteudo %}
+    <h2>Cadastrar agência</h2>
+    {% if clientes %}
+    <form class="cadastro" action="{{ url_for('cadastrar_agencia') }}" method="POST">
+        <select name="socio_cpf" required>
+            <option value="">Sócio (cliente)</option>
+            {% for cpf, cliente in clientes.items() %}
+                <option value="{{ cpf }}">{{ cliente.nome }} - {{ cpf|cpf }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="cnpj" placeholder="CNPJ (14 dígitos)" required>
+        <input type="text" name="codigo" placeholder="Código da agência" required>
+        <input type="text" name="cidade" placeholder="Cidade" required>
+        <input type="text" name="estado" placeholder="UF" maxlength="2" required>
+        <button type="submit">Cadastrar</button>
+    </form>
+    {% else %}
+        <p class="vazio">Não é possível cadastrar uma agência sem clientes.
+            <a href="{{ url_for('clientes') }}">Cadastre um cliente primeiro.</a></p>
+    {% endif %}
+
+    <h2>Agências cadastradas</h2>
+    {% if agencias %}
+    <table>
+        <thead>
+            <tr><th>Código</th><th>CNPJ</th><th>Sócio</th><th>Naturalidade</th><th>Ações</th></tr>
+        </thead>
+        <tbody>
+            {% for cnpj, agencia in agencias.items() %}
+            <tr>
+                <td>{{ agencia.codigo }}</td>
+                <td>{{ cnpj|cnpj }}</td>
+                <td>{{ clientes.get(agencia.socio_cpf, {}).get('nome', 'N/A') }}</td>
+                <td>{{ agencia.cidade }} - {{ agencia.estado }}</td>
+                <td>
+                    <form action="{{ url_for('deletar_agencia', cnpj=cnpj) }}" method="POST">
+                        <button type="submit" class="excluir">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="vazio">Nenhuma agência cadastrada.</p>
+    {% endif %}
+{% endblock %}

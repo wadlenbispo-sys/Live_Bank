@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block titulo %}Relatório{% endblock %}
+{% block conteudo %}
+    <h2>Relatório geral</h2>
+
+    <h3>Clientes cadastrados ({{ clientes|length }})</h3>
+    {% if clientes %}
+    <table>
+        <thead><tr><th>#</th><th>Nome</th><th>CPF</th><th>Naturalidade</th></tr></thead>
+        <tbody>
+            {% for cpf, cliente in clientes.items() %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ cliente.nome }}</td>
+                <td>{{ cpf|cpf }}</td>
+                <td>{{ cliente.cidade }} - {{ cliente.estado }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="vazio">Nenhum cliente cadastrado.</p>
+    {% endif %}
+
+    <h3>Agências cadastradas ({{ agencias|length }})</h3>
+    {% if agencias %}
+    <table>
+        <thead><tr><th>#</th><th>Código</th><th>CNPJ</th><th>Sócio</th><th>Naturalidade</th></tr></thead>
+        <tbody>
+            {% for cnpj, agencia in agencias.items() %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ agencia.codigo }}</td>
+                <td>{{ cnpj|cnpj }}</td>
+                <td>{{ clientes.get(agencia.socio_cpf, {}).get('nome', 'N/A') }}</td>
+                <td>{{ agencia.cidade }} - {{ agencia.estado }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="vazio">Nenhuma agência cadastrada.</p>
+    {% endif %}
+
+    <h3>Contas cadastradas</h3>
+    {% for chave, grupo in registros.items() %}
+        <h4>{{ grupo.nome }} ({{ grupo.quantidade }})</h4>
+        {% if grupo.contas %}
+        <table>
+            <thead>
+                <tr><th>#</th><th>Nº Conta</th><th>Titular</th><th>Agência</th><th>Saldo</th></tr>
+            </thead>
+            <tbody>
+                {% for numero, conta in grupo.contas.items() %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ numero }}</td>
+                    <td>{{ clientes.get(conta.cliente_cpf, {}).get('nome', 'N/A') }}</td>
+                    <td>{{ agencias.get(conta.agencia_cnpj, {}).get('codigo', 'N/A') }}</td>
+                    <td>{{ conta.saldo|moeda }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr><td colspan="4">Subtotal</td><td>{{ grupo.total|moeda }}</td></tr>
+                <tr><td colspan="4">Maior saldo</td><td>{{ grupo.maior_saldo|moeda }}</td></tr>
+                <tr><td colspan="4">Menor saldo</td><td>{{ grupo.menor_saldo|moeda }}</td></tr>
+                <tr><td colspan="4">Saldo médio</td><td>{{ grupo.media|moeda }}</td></tr>
+            </tfoot>
+        </table>
+        {% else %}
+            <p class="vazio">Nenhuma {{ grupo.nome|lower }} cadastrada.</p>
+        {% endif %}
+    {% endfor %}
+
+    <p class="total">Saldo total do banco: <strong>{{ total_geral|moeda }}</strong></p>
+{% endblock %}

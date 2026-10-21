@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Live_Bank - {% block titulo %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Live Bank</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Início</a>
+            <a href="{{ url_for('clientes') }}">Clientes</a>
+            <a href="{{ url_for('agencias') }}">Agências</a>
+            <a href="{{ url_for('contas') }}">Contas</a>
+            <a href="{{ url_for('relatorio') }}">Geral</a>
+        </nav>
+    </header>
+
+    <main>
+        {% for categoria, mensagem in get_flashed_messages(with_categories=true) %}
+            <div class="mensagem {{ categoria }}">{{ mensagem }}</div>
+        {% endfor %}
+
+        {% block conteudo %}{% endblock %}
+    </main>
+</body>
+</html>

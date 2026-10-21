@@ -1,0 +1,118 @@
+{
+  "clientes": {
+    "79743143548": {
+      "nome": "Alice Portugal",
+      "senha": "Iron",
+      "cidade": "Salvador",
+      "estado": "BA"
+    },
+    "63360935144": {
+      "nome": "Beto Pereira",
+      "senha": "Golden",
+      "cidade": "Campo Grande",
+      "estado": "MS"
+    },
+    "00132802520": {
+      "nome": "Capitão Alden",
+      "senha": "Sulfur",
+      "cidade": "Salvador",
+      "estado": "BA"
+    },
+    "09485349823": {
+      "nome": "Celso Russomano",
+      "senha": "Ruby",
+      "cidade": "Sao Paulo",
+      "estado": "SP"
+    },
+    "61912277522": {
+      "nome": "Claudio Cajado",
+      "senha": "Chromium",
+      "cidade": "Salvador",
+      "estado": "BA"
+    },
+    "91082103900": {
+      "nome": "Cobalchini",
+      "senha": "Zinc",
+      "cidade": "São Lourenço D'Oeste",
+      "estado": "SC"
+    },
+    "05146131490": {
+      "nome": "Dilvanda Faro",
+      "senha": "Neon",
+      "cidade": "Bujaru",
+      "estado": "PA"
+    },
+    "74118568004": {
+      "nome": "Giovani Cherini",
+      "senha": "Thallium",
+      "cidade": "Soledade",
+      "estado": "RS"
+    },
+    "80034328718": {
+      "nome": "Jack Rocha",
+      "senha": "Titanium",
+      "cidade": "Colatina",
+      "estado": "ES"
+    },
+    "14821497611": {
+      "nome": "Leonardo Monteiro",
+      "senha": "Bismuth",
+      "cidade": "Governador Valadares",
+      "estado": "MG"
+    },
+    "78372620695": {
+      "nome": "Nikolas Ferreira",
+      "senha": "Scandium",
+      "cidade": "Belo Horizonte",
+      "estado": "MG"
+    }
+  },
+  "agencias": {
+    "02653644000104": {
+      "codigo": "4588",
+      "socio_cpf": "61912277522",
+      "cidade": "Cachoeira",
+      "estado": "BA"
+    },
+    "97922266000123": {
+      "codigo": "1517",
+      "socio_cpf": "61912277522",
+      "cidade": "Terra Nova",
+      "estado": "BA"
+    },
+    "44487069000167": {
+      "codigo": "9224",
+      "socio_cpf": "61912277522",
+      "cidade": "Saubara",
+      "estado": "BA"
+    },
+    "39458899000126": {
+      "codigo": "3854",
+      "socio_cpf": "74118568004",
+      "cidade": "Soledade",
+      "estado": "RS"
+    },
+    "16916478000104": {
+      "codigo": "7211",
+      "socio_cpf": "79743143548",
+      "cidade": "Salvador",
+      "estado": "BA"
+    }
+  },
+  "contas": {
+    "1169880-8": {
+      "numero_conta": "1169880-8",
+      "tipo": "corrente",
+      "cliente_cpf": "79743143548",
+      "agencia_cnpj": "16916478000104",
+      "saldo": 1550000.0
+    },
+    "05747529-9": {
+      "numero_conta": "05747529-9",
+      "tipo": "corrente",
+      "cliente_cpf": "61912277522",
+      "agencia_cnpj": "97922266000123",
+      "saldo": 2357000.0
+    }
+  }
+}

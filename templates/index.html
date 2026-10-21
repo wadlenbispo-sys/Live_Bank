@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block titulo %}Início{% endblock %}
+{% block conteudo %}
+    <h2>Seja bem-vindo ao Live Bank</h2>
+    <div class="cartoes">
+        <a class="cartao" href="{{ url_for('clientes') }}">
+            <span class="numero">{{ total_clientes }}</span>
+            <span>Clientes</span>
+        </a>
+        <a class="cartao" href="{{ url_for('agencias') }}">
+            <span class="numero">{{ total_agencias }}</span>
+            <span>Agências</span>
+        </a>
+        <a class="cartao" href="{{ url_for('contas') }}">
+            <span class="numero">{{ total_contas }}</span>
+            <span>Contas</span>
+        </a>
+    </div>
+    <p class="dica">Ordem sugerida: cadastre um <strong>cliente</strong>, depois uma <strong>agência</strong> (o sócio é um cliente) e por fim as <strong>contas</strong>.</p>
+{% endblock %}
