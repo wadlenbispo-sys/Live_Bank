@@ -1,29 +1,85 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Live_Bank - {% block titulo %}{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>{% block title %}Banco{% endblock %} | Painel Bancário</title>
+    <style>
+        :root { font-family: "Segoe UI", Arial, sans-serif; color: #172b4d; background: #f3f6fb; font-synthesis: none; }
+        * { box-sizing: border-box; }
+        body { margin: 0; min-width: 320px; }
+        header { background: #102a43; color: white; }
+        .topbar, main { width: min(1120px, calc(100% - 32px)); margin: auto; }
+        .topbar { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+        .brand { color: white; font-size: 1.2rem; font-weight: 750; text-decoration: none; }
+        nav, .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        nav a { color: #e6f0ff; padding: 9px 11px; border-radius: 8px; text-decoration: none; }
+        nav a:hover, nav a:focus-visible { background: #244967; }
+        main { padding: 34px 0 52px; }
+        h1 { margin: 0 0 8px; font-size: clamp(1.7rem, 4vw, 2.2rem); }
+        h2 { margin: 0 0 18px; font-size: 1.2rem; }
+        .intro { margin: 0 0 24px; color: #52667e; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+        .card, .panel { background: white; border: 1px solid #e1e8f0; border-radius: 14px; box-shadow: 0 5px 18px #102a430a; }
+        .card { padding: 21px; }
+        .label { display: block; color: #52667e; font-size: .9rem; }
+        .value { display: block; margin-top: 8px; color: #0b5cab; font-size: 1.75rem; font-weight: 750; }
+        .bar-row { display: grid; grid-template-columns: minmax(120px, 1fr) minmax(100px, 2fr) auto; gap: 14px; align-items: center; padding: 12px 0; border-bottom: 1px solid #e5ebf2; }
+        .bar-track { height: 10px; overflow: hidden; border-radius: 8px; background: #e8f1fa; }
+        .bar-fill { height: 100%; border-radius: inherit; background: #0b72c6; }
+        .dashboard-links { margin-top: 20px; }
+        .panel { margin-top: 20px; padding: 23px; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 14px; align-items: end; }
+        .field { display: grid; gap: 7px; min-width: 0; }
+        label { font-size: .9rem; font-weight: 650; }
+        input, select { width: 100%; min-height: 42px; padding: 9px 11px; border: 1px solid #bdc9d8; border-radius: 8px; background: white; color: inherit; font: inherit; }
+        input:focus, select:focus { outline: 3px solid #b8dcff; border-color: #0b5cab; }
+        button, .button { display: inline-flex; justify-content: center; align-items: center; min-height: 40px; padding: 9px 13px; border: 0; border-radius: 8px; background: #0b5cab; color: white; font: inherit; font-weight: 650; text-decoration: none; cursor: pointer; }
+        button:hover, .button:hover { background: #084a88; }
+        button.secondary, .button.secondary { background: #e8f1fa; color: #174a72; }
+        button.danger { background: #a93232; }
+        .notice, .empty { padding: 13px 15px; border-radius: 9px; background: #e8f4ff; color: #174a72; }
+        .notice.erro { background: #fff0ef; color: #8a2924; }
+        .notice.ok { background: #eaf7ef; color: #24613b; }
+        .empty { margin: 0; background: #f3f6fb; color: #52667e; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 10px; border-bottom: 1px solid #e5ebf2; text-align: left; vertical-align: top; }
+        th { color: #52667e; font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; }
+        td form { margin: 4px 0; }
+        .inline-form { display: inline; }
+        .operations { min-width: 250px; }
+        footer { padding: 20px; color: #667a91; text-align: center; font-size: .9rem; }
+        @media (max-width: 640px) {
+            .topbar { align-items: flex-start; flex-direction: column; padding: 16px 0; gap: 10px; }
+            nav { gap: 2px; }
+            nav a { padding: 8px; }
+            main { padding-top: 24px; }
+            .panel { padding: 17px; }
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>Live Bank</h1>
-        <nav>
-            <a href="{{ url_for('index') }}">Início</a>
-            <a href="{{ url_for('clientes') }}">Clientes</a>
-            <a href="{{ url_for('agencias') }}">Agências</a>
-            <a href="{{ url_for('contas') }}">Contas</a>
-            <a href="{{ url_for('relatorio') }}">Geral</a>
-        </nav>
+        <div class="topbar">
+            <a class="brand" href="{{ url_for('index') }}">Painel do Live-Bank</a>
+            <nav aria-label="Navegação principal">
+                <a href="{{ url_for('index') }}">Dashboard</a>
+                <a href="{{ url_for('clientes') }}">Clientes</a>
+                <a href="{{ url_for('agencias') }}">Agências</a>
+                <a href="{{ url_for('contas') }}">Contas</a>
+                <a href="{{ url_for('relatorio') }}">Relatório</a>
+            </nav>
+        </div>
     </header>
-
     <main>
-        {% for categoria, mensagem in get_flashed_messages(with_categories=true) %}
-            <div class="mensagem {{ categoria }}">{{ mensagem }}</div>
-        {% endfor %}
-
-        {% block conteudo %}{% endblock %}
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+            {% for categoria, mensagem in mensagens %}
+                <p class="notice {{ categoria }}" role="status">{{ mensagem }}</p>
+            {% endfor %}
+        {% endwith %}
+        {% block content %}{% endblock %}
     </main>
+    <footer>Sistema de gerenciamento bancário</footer>
 </body>
 </html>
