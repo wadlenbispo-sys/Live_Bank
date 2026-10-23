@@ -1,95 +1,78 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block titulo %}Contas{% endblock %}
 {% block conteudo %}
-    <h2>Cadastrar conta</h2>
+{% set rotulos = {'saque': 'Sacar', 'deposito': 'Depositar', 'transferencia': 'Transferir', 'rendimento': 'Render (%)'} %}
+<h1>Contas</h1>
+<p class="subtitle">Abra contas e faça operações conforme o tipo de cada uma.</p>
+
+<section class="painel" aria-labelledby="nova-conta">
+    <h2 id="nova-conta">Nova conta</h2>
     {% if clientes and agencias %}
-    <form class="cadastro" action="{{ url_for('cadastrar_conta') }}" method="POST">
-        <select name="tipo" required>
-            <option value="">Tipo de conta</option>
-            {% for chave, nome in nomes.items() %}
-                <option value="{{ chave }}">{{ nome }}</option>
-            {% endfor %}
-        </select>
-        <select name="cliente_cpf" required>
-            <option value="">Titular (cliente)</option>
-            {% for cpf, cliente in clientes.items() %}
-                <option value="{{ cpf }}">{{ cliente.nome }} - {{ cpf|cpf }}</option>
-            {% endfor %}
-        </select>
-        <select name="agencia_cnpj" required>
-            <option value="">Agência</option>
-            {% for cnpj, agencia in agencias.items() %}
-                <option value="{{ cnpj }}">{{ agencia.codigo }} - {{ agencia.cidade }}/{{ agencia.estado }}</option>
-            {% endfor %}
-        </select>
-        <input type="text" name="numero_conta" placeholder="Número da conta" required>
-        <input type="number" name="saldo_inicial" placeholder="Saldo inicial" step="0.01" min="0" value="0">
-        <button type="submit">Cadastrar</button>
+    <form class="campos" method="post" action="{{ url_for('cadastrar_conta') }}">
+        <label>Tipo
+            <select name="tipo" required>
+                {% for chave, nome in nomes.items() %}<option value="{{ chave }}">{{ nome }}</option>{% endfor %}
+            </select>
+        </label>
+        <label>Cliente
+            <select name="cliente_cpf" required>
+                {% for cpf, c in clientes.items() %}<option value="{{ cpf }}">{{ c.nome }}</option>{% endfor %}
+            </select>
+        </label>
+        <label>Agência
+            <select name="agencia_cnpj" required>
+                {% for cnpj, a in agencias.items() %}<option value="{{ cnpj }}">{{ a.codigo }} - {{ a.cidade }}/{{ a.estado }}</option>{% endfor %}
+            </select>
+        </label>
+        <label>Nº da conta <input name="numero_conta" required></label>
+        <label>Saldo inicial <input name="saldo_inicial" inputmode="decimal" placeholder="0,00"></label>
+        <button type="submit">Cadastrar conta</button>
     </form>
     {% else %}
-        <p class="vazio">Para cadastrar contas é preciso ter ao menos um
-            <a href="{{ url_for('clientes') }}">cliente</a> e uma
-            <a href="{{ url_for('agencias') }}">agência</a>.</p>
+    <p class="vazio">
+        Antes de abrir uma conta, cadastre
+        {% if not clientes %}um <a href="{{ url_for('clientes') }}">cliente</a>{% endif %}
+        {% if not clientes and not agencias %} e {% endif %}
+        {% if not agencias %}uma <a href="{{ url_for('agencias') }}">agência</a>{% endif %}.
+    </p>
     {% endif %}
+</section>
 
-    <h2>Contas cadastradas</h2>
+<section class="painel" aria-labelledby="lista-contas">
+    <h2 id="lista-contas">Contas cadastradas</h2>
     {% if contas %}
-    <table>
-        <thead>
-            <tr>
-                <th>Tipo</th><th>Nº Conta</th><th>Titular</th><th>Agência</th>
-                <th>Saldo</th><th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for numero, conta in contas.items() %}
-            <tr>
-                <td>{{ nomes.get(conta.tipo, conta.tipo) }}</td>
-                <td>{{ numero }}</td>
-                <td>{{ clientes.get(conta.cliente_cpf, {}).get('nome', 'N/A') }}</td>
-                <td>{{ agencias.get(conta.agencia_cnpj, {}).get('codigo', 'N/A') }}</td>
-                <td>{{ conta.saldo|moeda }}</td>
-                <td>
-                    {% set permitidas = permissoes.get(conta.tipo, []) %}
-
-                    {% if 'saque' in permitidas %}
-                    <form action="{{ url_for('operar_conta', numero_conta=numero, operacao='saque') }}" method="POST">
-                        <input type="number" name="valor" placeholder="Valor" step="0.01" min="0.01" required>
-                        <button type="submit">Sacar</button>
-                    </form>
-                    {% endif %}
-
-                    {% if 'deposito' in permitidas %}
-                    <form action="{{ url_for('operar_conta', numero_conta=numero, operacao='deposito') }}" method="POST">
-                        <input type="number" name="valor" placeholder="Valor" step="0.01" min="0.01" required>
-                        <button type="submit">Depositar</button>
-                    </form>
-                    {% endif %}
-
-                    {% if 'rendimento' in permitidas %}
-                    <form action="{{ url_for('operar_conta', numero_conta=numero, operacao='rendimento') }}" method="POST">
-                        <input type="number" name="valor" placeholder="Taxa %" step="0.01" min="0.01" required>
-                        <button type="submit">Render</button>
-                    </form>
-                    {% endif %}
-
-                    {%if 'transferencia' in permitidas %}
-                    <form action="{{ url_for('operar_conta', numero_conta=numero, operacao='transferencia') }}" method="POST">
-                        <input type="text" name="conta_destino" placeholder="Nº da conta direcionada" required>
-                        <input type="number" name="valor" placeholder="Valor destinado" step="0.01" min="0.01" required>
-                         <button type="submit">Transferir</button>
-                    </form>
-                    {% endif%}
-
-                    <form action="{{ url_for('deletar_conta', numero_conta=numero) }}" method="POST">
-                        <button type="submit" class="excluir">Excluir</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="tabela-wrap">
+        <table>
+            <thead><tr><th>Nº</th><th>Tipo</th><th>Cliente</th><th class="num">Saldo</th><th>Operações</th></tr></thead>
+            <tbody>
+                {% for numero, c in contas.items() %}
+                {% set permitidas = permissoes.get(c.tipo, []) %}
+                <tr>
+                    <td>{{ numero }}</td>
+                    <td>{{ nomes.get(c.tipo, c.tipo) }}</td>
+                    <td>{{ clientes[c.cliente_cpf].nome if c.cliente_cpf in clientes else c.cliente_cpf }}</td>
+                    <td class="num {{ 'negativo' if c.saldo < 0 else 'positivo' }}">{{ c.saldo | moeda }}</td>
+                    <td>
+                        <form class="operacoes" method="post">
+                            <input name="valor" inputmode="decimal" placeholder="Valor" aria-label="Valor">
+                            {% if 'transferencia' in permitidas %}
+                            <input name="conta_destino" placeholder="Conta destino" aria-label="Conta de destino">
+                            {% endif %}
+                            {% for op in ['saque', 'deposito', 'transferencia', 'rendimento'] if op in permitidas %}
+                            <button class="secundario" type="submit"
+                                    formaction="{{ url_for('operar_conta', numero_conta=numero, operacao=op) }}">{{ rotulos[op] }}</button>
+                            {% endfor %}
+                            <button class="perigo" type="submit" formnovalidate
+                                    formaction="{{ url_for('deletar_conta', numero_conta=numero) }}">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
-        <p class="vazio">Nenhuma conta cadastrada.</p>
+    <p class="vazio">Nenhuma conta cadastrada.</p>
     {% endif %}
+</section>
 {% endblock %}
