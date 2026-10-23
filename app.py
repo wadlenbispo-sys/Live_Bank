@@ -1,22 +1,18 @@
-import json
 import os
+import json
 import re
 from flask import Flask, render_template, request, redirect, url_for, flash
 from functools import reduce
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='teste4_templates')
 app.secret_key = "troque-esta-chave"
-
-# Caminho absoluto: o arquivo fica sempre ao lado do app.py
-ARQUIVO = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dados.json")
+ARQUIVO = os.path.join(os.path.dirname(__file__), 'dados.json')
 
 TIPOS_VALIDOS = {
     'corrente': 'Conta Corrente',
     'poupanca': 'Conta Poupança',
     'salario': 'Conta Salário',
 }
-
-# O que cada tipo de conta pode fazer
 PERMISSOES = {
     'corrente': {'saque', 'deposito','transferencia'},
     'poupanca': {'deposito', 'rendimento'},
@@ -109,12 +105,33 @@ def formatar_cnpj(valor):
                             # | Início |
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 @app.route('/')
+@app.route('/dashboard')
 def index():
     dados = carregar_dados()
+    contas = list(dados['contas'].items())
+    saldo_total = round(sum(conta['saldo'] for _, conta in contas), 2)
+    maior_conta = max(contas, key=lambda item: item[1]['saldo'], default=None)
+    saldos_por_tipo = {}
+    for tipo, nome in TIPOS_VALIDOS.items():
+        contas_tipo = [conta for _, conta in contas if conta['tipo'] == tipo]
+        saldos_por_tipo[tipo] = {
+            'nome': nome,
+            'quantidade': len(contas_tipo),
+            'saldo': round(sum(conta['saldo'] for conta in contas_tipo), 2),
+        }
     return render_template('index.html',
                            total_clientes=len(dados['clientes']),
                            total_agencias=len(dados['agencias']),
-                           total_contas=len(dados['contas']))
+                           total_contas=len(contas),
+                           tem_clientes=bool(dados['clientes']),
+                           tem_agencias=bool(dados['agencias']),
+                           saldo_total=saldo_total,
+                           saldo_medio=round(saldo_total / len(contas), 2) if contas else 0,
+                           maior_conta=maior_conta,
+                           saldos_por_tipo=saldos_por_tipo,
+                           maior_saldo_tipo=max(
+                               (item['saldo'] for item in saldos_por_tipo.values()),
+                               default=0))
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
                             # | Clientes |
@@ -370,4 +387,4 @@ def relatorio():
     
 if __name__ == '__main__':
     print("Servidor iniciado em http://127.0.0.1:5003")
-    app.run(port=5003, debug=True)
+    app.run(host='127.0.0.1', port=5003, debug=True)
