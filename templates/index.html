@@ -1,20 +1,76 @@
-{% extends 'base.html' %}
-{% block titulo %}Início{% endblock %}
-{% block conteudo %}
-    <h2>Seja bem-vindo ao Live Bank</h2>
-    <div class="cartoes">
-        <a class="cartao" href="{{ url_for('clientes') }}">
-            <span class="numero">{{ total_clientes }}</span>
-            <span>Clientes</span>
-        </a>
-        <a class="cartao" href="{{ url_for('agencias') }}">
-            <span class="numero">{{ total_agencias }}</span>
-            <span>Agências</span>
-        </a>
-        <a class="cartao" href="{{ url_for('contas') }}">
-            <span class="numero">{{ total_contas }}</span>
-            <span>Contas</span>
-        </a>
-    </div>
-    <p class="dica">Ordem sugerida: cadastre um <strong>cliente</strong>, depois uma <strong>agência</strong> (o sócio é um cliente) e por fim as <strong>contas</strong>.</p>
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+    <h1>Dashboard</h1>
+    <p class="intro">Resumo do banco: cadastros e saldos em um só lugar.</p>
+    <section class="grid" aria-label="Indicadores do banco">
+        <article class="card"><span class="label">Clientes</span><strong class="value">{{ total_clientes }}</strong></article>
+        <article class="card"><span class="label">Agências</span><strong class="value">{{ total_agencias }}</strong></article>
+        <article class="card"><span class="label">Contas</span><strong class="value">{{ total_contas }}</strong></article>
+        <article class="card"><span class="label">Saldo total</span><strong class="value">{{ saldo_total|moeda }}</strong></article>
+        <article class="card"><span class="label">Saldo médio por conta</span><strong class="value">{{ saldo_medio|moeda }}</strong></article>
+        <article class="card">
+            <span class="label">Maior saldo em conta</span>
+            {% if maior_conta %}
+                <strong class="value">{{ maior_conta[1].saldo|moeda }}</strong>
+                <span class="label">Conta {{ maior_conta[0] }}</span>
+            {% else %}
+                <strong class="value">{{ 0|moeda }}</strong>
+                <span class="label">Nenhuma conta cadastrada</span>
+            {% endif %}
+        </article>
+    </section>
+    <section class="panel dashboard-links">
+        <h2>Comece por aqui</h2>
+        <p class="intro">Siga esta ordem para cadastrar corretamente: primeiro o cliente, depois a agência e, por fim, a conta.</p>
+        <div class="grid">
+            <article class="card">
+                <span class="label">1. Cadastrar cliente</span>
+                <strong class="value">{{ total_clientes }}</strong>
+                <p class="label">O cliente será o titular da conta e pode ser sócio de uma agência.</p>
+                <a class="button" href="{{ url_for('clientes') }}">Ir para cadastro de clientes</a>
+            </article>
+            <article class="card">
+                <span class="label">2. Cadastrar agência</span>
+                <strong class="value">{{ total_agencias }}</strong>
+                <p class="label">A agência precisa estar vinculada a um cliente já cadastrado.</p>
+                {% if tem_clientes %}
+                    <a class="button" href="{{ url_for('agencias') }}">Ir para cadastro de agências</a>
+                {% else %}
+                    <span class="label">Cadastre um cliente antes de continuar.</span>
+                {% endif %}
+            </article>
+            <article class="card">
+                <span class="label">3. Criar conta</span>
+                <strong class="value">{{ total_contas }}</strong>
+                <p class="label">Cada conta precisa de um cliente titular e de uma agência cadastrada.</p>
+                {% if tem_clientes and tem_agencias %}
+                    <a class="button" href="{{ url_for('contas') }}">Ir para cadastro de contas</a>
+                {% else %}
+                    <span class="label">Cadastre primeiro um cliente e uma agência.</span>
+                {% endif %}
+            </article>
+        </div>
+    </section>
+    <section class="panel">
+        <h2>Saldo por tipo de conta</h2>
+        {% for tipo, resumo in saldos_por_tipo.items() %}
+            <div class="bar-row">
+                <span>{{ resumo.nome }} ({{ resumo.quantidade }})</span>
+                <div class="bar-track" role="img" aria-label="Saldo de {{ resumo.nome }}: {{ resumo.saldo|moeda }}">
+                    <div class="bar-fill" style="width: {{ (resumo.saldo / maior_saldo_tipo * 100) if maior_saldo_tipo else 0 }}%"></div>
+                </div>
+                <strong>{{ resumo.saldo|moeda }}</strong>
+            </div>
+        {% endfor %}
+    </section>
+    <section class="panel dashboard-links">
+        <h2>Acesso rápido</h2>
+        <div class="actions">
+            <a class="button" href="{{ url_for('clientes') }}">Clientes</a>
+            <a class="button secondary" href="{{ url_for('agencias') }}">Agências</a>
+            <a class="button secondary" href="{{ url_for('contas') }}">Contas</a>
+            <a class="button secondary" href="{{ url_for('relatorio') }}">Relatório</a>
+        </div>
+    </section>
 {% endblock %}
