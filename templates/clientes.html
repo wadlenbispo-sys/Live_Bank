@@ -1,38 +1,45 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block titulo %}Clientes{% endblock %}
 {% block conteudo %}
-    <h2>Cadastrar cliente</h2>
-    <form class="cadastro" action="{{ url_for('cadastrar_cliente') }}" method="POST">
-        <input type="text" name="nome" placeholder="Nome" required>
-        <input type="text" name="cpf" placeholder="CPF" required>
-        <input type="password" name="senha" placeholder="Senha ('Preencher:')" minlength="4" maxlength="15" required>
-        <input type="text" name="cidade" placeholder="Cidade" required>
-        <input type="text" name="estado" placeholder="UF" maxlength="2" required>
-        <button type="submit">Cadastrar</button>
-    </form>
+<h1>Clientes</h1>
+<p class="subtitle">Cadastre e gerencie os clientes.</p>
 
-    <h2>Clientes cadastrados</h2>
+<section class="painel" aria-labelledby="novo-cliente">
+    <h2 id="novo-cliente">Novo cliente</h2>
+    <form class="campos" method="post" action="{{ url_for('cadastrar_cliente') }}">
+        <label>Nome <input name="nome" required></label>
+        <label>CPF <input name="cpf" inputmode="numeric" placeholder="somente números" required></label>
+        <label>Senha (4 a 15 caracteres) <input name="senha" type="password" minlength="4" maxlength="15" required></label>
+        <label>Cidade <input name="cidade" required></label>
+        <label>UF <input name="estado" maxlength="2" required></label>
+        <button type="submit">Cadastrar cliente</button>
+    </form>
+</section>
+
+<section class="painel" aria-labelledby="lista-clientes">
+    <h2 id="lista-clientes">Clientes cadastrados</h2>
     {% if clientes %}
-    <table>
-        <thead>
-            <tr><th>Nome</th><th>CPF</th><th>Naturalidade</th><th>Ações</th></tr>
-        </thead>
-        <tbody>
-            {% for cpf, cliente in clientes.items() %}
-            <tr>
-                <td>{{ cliente.nome }}</td>
-                <td>{{ cpf|cpf }}</td>
-                <td>{{ cliente.cidade }} - {{ cliente.estado }}</td>
-                <td>
-                    <form action="{{ url_for('deletar_cliente', cpf=cpf) }}" method="POST">
-                        <button type="submit" class="excluir">Excluir</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="tabela-wrap">
+        <table>
+            <thead><tr><th>Nome</th><th>CPF</th><th>Cidade</th><th></th></tr></thead>
+            <tbody>
+                {% for cpf, c in clientes.items() %}
+                <tr>
+                    <td>{{ c.nome }}</td>
+                    <td>{{ cpf | cpf }}</td>
+                    <td>{{ c.cidade }}/{{ c.estado }}</td>
+                    <td class="num">
+                        <form method="post" action="{{ url_for('deletar_cliente', cpf=cpf) }}">
+                            <button class="perigo" type="submit">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
-        <p class="vazio">Nenhum cliente cadastrado.</p>
+    <p class="vazio">Nenhum cliente cadastrado. Use o formulário acima para criar o primeiro.</p>
     {% endif %}
+</section>
 {% endblock %}
