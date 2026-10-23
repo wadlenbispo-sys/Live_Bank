@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block titulo %}Dashboard{% endblock %}
+{% block conteudo %}
+<h1>Dashboard</h1>
+<p class="subtitle">Resumo de clientes, agências e contas.</p>
+
+<dl class="totais">
+    <div class="total"><dt>Clientes</dt><dd><a href="{{ url_for('clientes') }}">{{ total_clientes }}</a></dd></div>
+    <div class="total"><dt>Agências</dt><dd><a href="{{ url_for('agencias') }}">{{ total_agencias }}</a></dd></div>
+    <div class="total"><dt>Contas</dt><dd><a href="{{ url_for('contas') }}">{{ total_contas }}</a></dd></div>
+</dl>
+
+<section class="painel" aria-labelledby="titulo-saldos">
+    <h2 id="titulo-saldos">Saldos por tipo de conta</h2>
+    {% if saldos_por_tipo %}
+    <div class="tabela-wrap">
+        <table>
+            <thead>
+                <tr><th scope="col">Tipo</th><th scope="col" class="num">Contas</th><th scope="col" class="num">Saldo</th></tr>
+            </thead>
+            <tbody>
+                {% for tipo, info in saldos_por_tipo.items() %}
+                <tr>
+                    <th scope="row">{{ info.nome }}</th>
+                    <td class="num">{{ info.quantidade }}</td>
+                    <td class="num {{ 'negativo' if info.saldo < 0 else 'positivo' }}">{{ info.saldo | moeda }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                {% set saldo_total = saldos_por_tipo.values() | sum(attribute='saldo') %}
+                <tr>
+                    <td>Total</td>
+                    <td class="num">{{ saldos_por_tipo.values() | sum(attribute='quantidade') }}</td>
+                    <td class="num {{ 'negativo' if saldo_total < 0 else 'positivo' }}">{{ saldo_total | moeda }}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    {% else %}
+    <p class="vazio">Nenhuma conta cadastrada ainda.</p>
+    {% endif %}
+</section>
+{% endblock %}

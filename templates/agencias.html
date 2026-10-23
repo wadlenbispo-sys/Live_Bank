@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block titulo %}Agências{% endblock %}
+{% block conteudo %}
+<h1>Agências</h1>
+<p class="subtitle">Cada agência precisa de um cliente sócio.</p>
+
+<section class="painel" aria-labelledby="nova-agencia">
+    <h2 id="nova-agencia">Nova agência</h2>
+    {% if clientes %}
+    <form class="campos" method="post" action="{{ url_for('cadastrar_agencia') }}">
+        <label>Sócio
+            <select name="socio_cpf" required>
+                {% for cpf, c in clientes.items() %}
+                <option value="{{ cpf }}">{{ c.nome }} ({{ cpf | cpf }})</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>CNPJ <input name="cnpj" inputmode="numeric" placeholder="14 dígitos" required></label>
+        <label>Código <input name="codigo" required></label>
+        <label>Cidade <input name="cidade" required></label>
+        <label>UF <input name="estado" maxlength="2" required></label>
+        <button type="submit">Cadastrar agência</button>
+    </form>
+    {% else %}
+    <p class="vazio">Cadastre um cliente antes: <a href="{{ url_for('clientes') }}">ir para Clientes</a>.</p>
+    {% endif %}
+</section>
+
+<section class="painel" aria-labelledby="lista-agencias">
+    <h2 id="lista-agencias">Agências cadastradas</h2>
+    {% if agencias %}
+    <div class="tabela-wrap">
+        <table>
+            <thead><tr><th>Código</th><th>CNPJ</th><th>Cidade</th><th>Sócio</th><th></th></tr></thead>
+            <tbody>
+                {% for cnpj, a in agencias.items() %}
+                <tr>
+                    <td>{{ a.codigo }}</td>
+                    <td>{{ cnpj | cnpj }}</td>
+                    <td>{{ a.cidade }}/{{ a.estado }}</td>
+                    <td>{{ clientes[a.socio_cpf].nome if a.socio_cpf in clientes else a.socio_cpf }}</td>
+                    <td class="num">
+                        <form method="post" action="{{ url_for('deletar_agencia', cnpj=cnpj) }}">
+                            <button class="perigo" type="submit">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="vazio">Nenhuma agência cadastrada.</p>
+    {% endif %}
+</section>
+{% endblock %}
