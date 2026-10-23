@@ -1,77 +1,51 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block titulo %}Relatório{% endblock %}
 {% block conteudo %}
-    <h2>Relatório geral</h2>
+<h1>Relatório</h1>
+<p class="subtitle">Saldos por tipo de conta. Total geral: <strong>{{ total_geral | moeda }}</strong></p>
 
-    <h3>Clientes cadastrados ({{ clientes|length }})</h3>
-    {% if clientes %}
-    <table>
-        <thead><tr><th>#</th><th>Nome</th><th>CPF</th><th>Naturalidade</th></tr></thead>
-        <tbody>
-            {% for cpf, cliente in clientes.items() %}
-            <tr>
-                <td>{{ loop.index }}</td>
-                <td>{{ cliente.nome }}</td>
-                <td>{{ cpf|cpf }}</td>
-                <td>{{ cliente.cidade }} - {{ cliente.estado }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-        <p class="vazio">Nenhum cliente cadastrado.</p>
-    {% endif %}
-
-    <h3>Agências cadastradas ({{ agencias|length }})</h3>
-    {% if agencias %}
-    <table>
-        <thead><tr><th>#</th><th>Código</th><th>CNPJ</th><th>Sócio</th><th>Naturalidade</th></tr></thead>
-        <tbody>
-            {% for cnpj, agencia in agencias.items() %}
-            <tr>
-                <td>{{ loop.index }}</td>
-                <td>{{ agencia.codigo }}</td>
-                <td>{{ cnpj|cnpj }}</td>
-                <td>{{ clientes.get(agencia.socio_cpf, {}).get('nome', 'N/A') }}</td>
-                <td>{{ agencia.cidade }} - {{ agencia.estado }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-        <p class="vazio">Nenhuma agência cadastrada.</p>
-    {% endif %}
-
-    <h3>Contas cadastradas</h3>
-    {% for chave, grupo in registros.items() %}
-        <h4>{{ grupo.nome }} ({{ grupo.quantidade }})</h4>
-        {% if grupo.contas %}
+<section class="painel" aria-labelledby="resumo">
+    <h2 id="resumo">Resumo</h2>
+    <div class="tabela-wrap">
         <table>
             <thead>
-                <tr><th>#</th><th>Nº Conta</th><th>Titular</th><th>Agência</th><th>Saldo</th></tr>
+                <tr><th>Tipo</th><th class="num">Contas</th><th class="num">Total</th>
+                    <th class="num">Maior</th><th class="num">Menor</th><th class="num">Média</th></tr>
             </thead>
             <tbody>
-                {% for numero, conta in grupo.contas.items() %}
+                {% for chave, r in registros.items() %}
                 <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ numero }}</td>
-                    <td>{{ clientes.get(conta.cliente_cpf, {}).get('nome', 'N/A') }}</td>
-                    <td>{{ agencias.get(conta.agencia_cnpj, {}).get('codigo', 'N/A') }}</td>
-                    <td>{{ conta.saldo|moeda }}</td>
+                    <th scope="row">{{ r.nome }}</th>
+                    <td class="num">{{ r.contas | length }}</td>
+                    <td class="num">{{ r.saldo_geral | moeda }}</td>
+                    <td class="num">{{ r.maior_saldo | moeda }}</td>
+                    <td class="num">{{ r.menor_saldo | moeda }}</td>
+                    <td class="num">{{ r.media | moeda }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
-            <tfoot>
-                <tr><td colspan="4">Subtotal</td><td>{{ grupo.total|moeda }}</td></tr>
-                <tr><td colspan="4">Maior saldo</td><td>{{ grupo.maior_saldo|moeda }}</td></tr>
-                <tr><td colspan="4">Menor saldo</td><td>{{ grupo.menor_saldo|moeda }}</td></tr>
-                <tr><td colspan="4">Saldo médio</td><td>{{ grupo.media|moeda }}</td></tr>
-            </tfoot>
         </table>
-        {% else %}
-            <p class="vazio">Nenhuma {{ grupo.nome|lower }} cadastrada.</p>
-        {% endif %}
-    {% endfor %}
+    </div>
+</section>
 
-    <p class="total">Saldo total do banco: <strong>{{ total_geral|moeda }}</strong></p>
+{% for chave, r in registros.items() if r.contas %}
+<section class="painel" aria-labelledby="tipo-{{ chave }}">
+    <h2 id="tipo-{{ chave }}">{{ r.nome }}</h2>
+    <div class="tabela-wrap">
+        <table>
+            <thead><tr><th>Nº</th><th>Cliente</th><th>Agência</th><th class="num">Saldo</th></tr></thead>
+            <tbody>
+                {% for numero, c in r.contas.items() %}
+                <tr>
+                    <td>{{ numero }}</td>
+                    <td>{{ clientes[c.cliente_cpf].nome if c.cliente_cpf in clientes else c.cliente_cpf }}</td>
+                    <td>{{ agencias[c.agencia_cnpj].codigo if c.agencia_cnpj in agencias else c.agencia_cnpj }}</td>
+                    <td class="num">{{ c.saldo | moeda }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endfor %}
 {% endblock %}
