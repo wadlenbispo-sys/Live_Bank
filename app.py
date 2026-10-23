@@ -4,15 +4,19 @@ import re
 from flask import Flask, render_template, request, redirect, url_for, flash
 from functools import reduce
 
-app = Flask(__name__, template_folder='teste4_templates')
-app.secret_key = "troque-esta-chave"
-ARQUIVO = os.path.join(os.path.dirname(__file__), 'dados.json')
+app = Flask(__name__)
+app.secret_key = 'troque-por-uma-chave-secreta'
+
+# Caminho absoluto: o arquivo fica sempre ao lado do app.py
+ARQUIVO = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dados.json")
 
 TIPOS_VALIDOS = {
     'corrente': 'Conta Corrente',
     'poupanca': 'Conta Poupança',
     'salario': 'Conta Salário',
 }
+
+# O que cada tipo de conta pode fazer
 PERMISSOES = {
     'corrente': {'saque', 'deposito','transferencia'},
     'poupanca': {'deposito', 'rendimento'},
@@ -108,31 +112,26 @@ def formatar_cnpj(valor):
 @app.route('/dashboard')
 def index():
     dados = carregar_dados()
-    contas = list(dados['contas'].items())
-    saldo_total = round(sum(conta['saldo'] for _, conta in contas), 2)
-    maior_conta = max(contas, key=lambda item: item[1]['saldo'], default=None)
-    saldos_por_tipo = {}
-    for tipo, nome in TIPOS_VALIDOS.items():
-        contas_tipo = [conta for _, conta in contas if conta['tipo'] == tipo]
-        saldos_por_tipo[tipo] = {
-            'nome': nome,
-            'quantidade': len(contas_tipo),
-            'saldo': round(sum(conta['saldo'] for conta in contas_tipo), 2),
-        }
-    return render_template('index.html',
-                           total_clientes=len(dados['clientes']),
-                           total_agencias=len(dados['agencias']),
-                           total_contas=len(contas),
-                           tem_clientes=bool(dados['clientes']),
-                           tem_agencias=bool(dados['agencias']),
-                           saldo_total=saldo_total,
-                           saldo_medio=round(saldo_total / len(contas), 2) if contas else 0,
-                           maior_conta=maior_conta,
-                           saldos_por_tipo=saldos_por_tipo,
-                           maior_saldo_tipo=max(
-                               (item['saldo'] for item in saldos_por_tipo.values()),
-                               default=0))
+    contas = dados.get('contas', {}).values()
+    saldos_por_tipo = {
+        tipo: {'nome': nome, 'quantidade': 0, 'saldo': 0.0}
+        for tipo, nome in TIPOS_VALIDOS.items()
+    }
+    for conta in contas:
+        resumo = saldos_por_tipo.get(conta.get('tipo'))
+        if resumo is not None:
+            resumo['quantidade'] += 1
+            resumo['saldo'] += conta.get('saldo', 0)
 
+    for resumo in saldos_por_tipo.values():
+        resumo['saldo'] = round(resumo['saldo'], 2)
+
+    return render_template('index.html',
+        total_clientes=len(dados.get('clientes', {})),
+        total_agencias=len(dados.get('agencias', {})),
+        total_contas=len(dados.get('contas', {})),
+        saldos_por_tipo=saldos_por_tipo,
+    )
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
                             # | Clientes |
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -363,22 +362,20 @@ def relatorio():
     for chave, nome in TIPOS_VALIDOS.items():
         documentos_filtrados = filter(lambda item: item[1]['tipo'] == chave, dados['contas'].items())
         modelo_conta = dict(documentos_filtrados)
-        total_contas = round(sum(map(lambda conta: conta['saldo'], modelo_conta.values())), 2)
         saldo_total = round(reduce(lambda sigma,conta: sigma + conta['saldo'],modelo_conta.values(),0),2)
         saldo_maior = max(map(lambda conta: conta['saldo'], modelo_conta.values()), default=0)
         saldo_menor = min(map(lambda conta: conta['saldo'], modelo_conta.values()), default=0) 
-        media = round(saldo_total / total_contas, 2) if total_contas else 0
+        media = round(saldo_total / len(modelo_conta), 2) if modelo_conta else 0
 
         registros[chave] = {
             'nome': nome,
             'contas': modelo_conta,
-            'total': total_contas,
             'saldo_geral': saldo_total,
             'maior_saldo': saldo_maior,
             'menor_saldo': saldo_menor,
             'media': media
         }
-    total_geral = round(sum(registro['total'] for registro in registros.values()), 2)
+    total_geral = round(sum(registro['saldo_geral'] for registro in registros.values()), 2)
     return render_template('relatorio.html',
                                clientes = dados['clientes'],
                                agencias = dados['agencias'],
