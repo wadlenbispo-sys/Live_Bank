@@ -61,7 +61,8 @@ class contacorrente(Conta):
        else:
           self.saldo += valor
           self.extrato.append({"Cliente": self.cliente, "numero_da_conta": self.numero_da_conta, "S": valor, "saldo_final": self._saldo})
-
+          
+   # responsavel por registrar as tansações acrescentando a hora e descrição do que foi feito.
    def registrar_transacao(self, descricao: str, valor: float):
        data_hora = datetime.now().strftime("%d/%m/%Y %H:%M")
        self.extrato.append(f"[{data_hora}] {descricao}: R$ {valor:.2f}")
@@ -83,8 +84,18 @@ class contapoupanca(Conta):
         else:
            self.saldo -= valor
            self.extrato.append({"Cliente": self.cliente, "numero_da_conta": self.numero_da_conta, "S": valor, "saldo_final": self._saldo})
-   
+           
+    # responsavel por registrar as tansações acrescentando a hora e descrição do que foi feito.
+    def registrar_transacao(self, descricao: str, valor: float):
+        data_hora = datetime.now().strftime("%d/%m/%Y %H:%M")
+        self.extrato.append(f"[{data_hora}] {descricao}: R$ {valor:.2f}")
 
+    def render_juros(self, meses=1):
+        if meses <= 0:
+           return ""
+        else:
+           novo_saldo = self._saldo * ((1 + self.taxa_mensal) ** meses)
+           rendimento = novo_saldo - self.saldo
 
 
 
