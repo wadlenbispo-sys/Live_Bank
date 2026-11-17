@@ -73,6 +73,17 @@ class contapoupanca(Conta):
         super().__init__(numero, titular, saldo)
         self.taxa_mensal = taxa_mensal  # Ex: 0.005 equivale a 0,5% ao mês
 
+    @property
+    def tipo(self) -> str:
+        return "Conta Poupança"
+
+    def sacar(self, valor):
+        if valor > self.saldo:
+           raise ValueError("valor maior do que já tem")
+        else:
+           self.saldo -= valor
+           self.extrato.append({"Cliente": self.cliente, "numero_da_conta": self.numero_da_conta, "S": valor, "saldo_final": self._saldo})
+   
 
 
 
