@@ -10,4 +10,23 @@ class Conta(ABC):
        self._saldo = saldo
        self.extrato = []  # Aqui será guardado o histórico de movimentos
     
- 
+   @property
+   def saldo(self) -> float:
+       return self._saldo
+
+   @saldo.setter
+   def saldo(self, valor):
+       self._saldo = valor
+
+   @property
+   @abstractmethod
+   def tipo(self) -> str:
+       pass
+
+   @abstractmethod
+   def registrar_transacao(self, descricao: str, valor: float):
+       pass
+
+   @abstractmethod
+   def sacar(self, valor):
+       pass
