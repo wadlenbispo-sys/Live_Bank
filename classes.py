@@ -79,23 +79,40 @@ class contapoupanca(Conta):
         return "Conta Poupança"
 
     def sacar(self, valor):
+        if valor <= 0:
+            raise ValueError("Informe um valor positivo para sacar.")
         if valor > self.saldo:
-           raise ValueError("valor maior do que já tem")
+            raise ValueError("Saldo insuficiente para o saque.")
         else:
            self.saldo -= valor
            self.extrato.append({"Cliente": self.cliente, "numero_da_conta": self.numero_da_conta, "S": valor, "saldo_final": self._saldo})
+           self.registrar_transacao("Saque", -valor)
            
     # responsavel por registrar as tansações acrescentando a hora e descrição do que foi feito.
     def registrar_transacao(self, descricao: str, valor: float):
         data_hora = datetime.now().strftime("%d/%m/%Y %H:%M")
         self.extrato.append(f"[{data_hora}] {descricao}: R$ {valor:.2f}")
 
-    def render_juros(self, meses=1):
+    def render_juros(self, meses: int = 1) -> dict:
         if meses <= 0:
-           return ""
-        else:
-           novo_saldo = self._saldo * ((1 + self.taxa_mensal) ** meses)
-           rendimento = novo_saldo - self.saldo
+            raise ValueError("A quantidade de meses deve ser maior que zero.")
+        
+        if self.saldo <= 0:
+            return {"sucesso": False, "mensagem": "Sem saldo para render juros.", "rendimento": 0.0}
+
+        novo_saldo = self.saldo * ((1 + self.taxa_mensal) ** meses)
+        rendimento = round(novo_saldo - self.saldo, 2)
+
+        if rendimento > 0:
+            descricao = f"Rendimento ({meses} {'mês' if meses == 1 else 'meses'})"
+            self.depositar(rendimento, descricao=descricao)
+
+        return {
+            "sucesso": True,
+            "mensagem": f"Rendimento de R$ {rendimento:.2f} aplicado!",
+            "rendimento": rendimento,
+            "novo_saldo": self.saldo
+        }
 
 
 
