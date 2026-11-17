@@ -8,6 +8,6 @@ class Conta(ABC):
        self.cliente = cliente
        self.agencia = agencia
        self._saldo = saldo
-       self.extrato = [] # Aqui será guardado o histórico de movimentos
+       self.extrato = []  # Aqui será guardado o histórico de movimentos
     
  
