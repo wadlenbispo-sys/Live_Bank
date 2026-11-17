@@ -38,6 +38,34 @@ class Conta(ABC):
           self.saldo += valor
           self.extrato.append({"Cliente": self.cliente, "numero_da_conta": self.numero_da_conta, "D": valor, "Saldo_final": self.saldo})
 
+# classe reponsavel pelas operações da conta corrente.
+class contacorrente(Conta):
+
+   def __init__(self, numero, titular, saldo):
+       super().__init__(numero, titular, saldo)
+
+   @property
+   def tipo(self) -> str:
+       return "Conta Corrente"
+
+   def sacar(self, valor):
+       if valor > self.saldo:
+          raise ValueError("valor maior do que já tem")
+       else:
+          self.saldo -= valor
+          self.extrato.append({"Cliente": self.cliente, "numero_da_conta": self.numero_da_conta, "S": valor, "saldo_final": self._saldo})
+          
+   def depositar(self, valor):
+       if valor < 0:
+          raise ValueError("acrescente um valor positivo para depositar")
+       else:
+          self.saldo += valor
+          self.extrato.append({"Cliente": self.cliente, "numero_da_conta": self.numero_da_conta, "S": valor, "saldo_final": self._saldo})
+
+   def registrar_transacao(self, descricao: str, valor: float):
+       data_hora = datetime.now().strftime("%d/%m/%Y %H:%M")
+       self.extrato.append(f"[{data_hora}] {descricao}: R$ {valor:.2f}")
+
 
 
 
