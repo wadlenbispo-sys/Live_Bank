@@ -30,3 +30,15 @@ class Conta(ABC):
    @abstractmethod
    def sacar(self, valor):
        pass
+      
+   def depositar(self, valor):
+       if valor < 0:
+          raise ValueError("acrescente um valor positivo para depositar")
+       else:
+          self.saldo += valor
+          self.extrato.append({"Cliente": self.cliente, "numero_da_conta": self.numero_da_conta, "D": valor, "Saldo_final": self.saldo})
+
+
+
+
+
