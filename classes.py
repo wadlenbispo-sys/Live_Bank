@@ -17,36 +17,42 @@ class Conta(ABC):
    @saldo.setter
    def saldo(self, valor):
        self._saldo = valor
-
+   
    @property
    @abstractmethod
    def tipo(self) -> str:
        pass
 
+   @property
+   def saldo_formatado(self) -> str:
+        """Retorna o saldo formatado em reais para exibir no HTML."""
+        valor = f"{self._saldo:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        return f"R$ {valor}"
+       
    @abstractmethod
    def registrar_transacao(self, descricao: str, valor: float):
        pass
 
+   # metodo que será herdado pelas classes contacorrente e contapoupança.
+   def depositar(self, valor: float, descricao: str = "Depósito") -> dict:
+       if valor <= 0:
+          raise ValueError("Acrescente um valor positivo para depositar.")
+        
+       self.saldo += valor
+       self.registrar_transacao(descricao, valor)
+       return {
+            "sucesso": True,
+            "mensagem": f"{descricao} realizado com sucesso!",
+            "novo_saldo": self.saldo_formatado
+       }
+
    @abstractmethod
-   def sacar(self, valor) -> float:
+   def sacar(self, valor: float) -> dict:
        pass
 
-   # metodo que será herdado pelas classes contacorrente e contapoupança.
-   def depositar(self, valor):
-       if valor < 0:
-          raise ValueError("acrescente um valor positivo para depositar")
-       else:
-          self.saldo += valor
-          self.registrar_transacao(descricao, valor)
-          return {"sucesso": True, "mensagem": f"{descricao} realizado com sucesso!", "novo_saldo": self.saldo_formatado}
-
-    @abstractmethod
-    def sacar(self, valor: float) -> dict:
-        pass
-
-    def to_dict(self) -> dict:
-        """Exporta todos os dados da conta para templates HTML ou respostas JSON."""
-        return {
+   def to_dict(self) -> dict:
+       """Exporta todos os dados da conta para templates HTML ou respostas JSON."""
+       return {
             "tipo": self.tipo,
             "agencia": self.agencia,
             "numero": self.numero_da_conta,
@@ -54,7 +60,7 @@ class Conta(ABC):
             "saldo": self.saldo,
             "saldo_formatado": self.saldo_formatado,
             "extrato": self.extrato
-        }
+       }
 
 # classe reponsavel pelas operações da conta corrente.
 class contacorrente(Conta):
@@ -112,6 +118,7 @@ class contapoupanca(Conta):
         data_hora = datetime.now().strftime("%d/%m/%Y %H:%M")
         self.extrato.append(f"[{data_hora}] {descricao}: R$ {valor:.2f}")
 
+    # reponsavel por calcular o juros composto ao mes.
     def render_juros(self, meses: int = 1) -> dict:
         if meses <= 0:
             raise ValueError("A quantidade de meses deve ser maior que zero.")
@@ -130,7 +137,7 @@ class contapoupanca(Conta):
             "sucesso": True,
             "mensagem": f"Rendimento de R$ {rendimento:.2f} aplicado!",
             "rendimento": rendimento,
-            "novo_saldo": self.saldo
+            "novo_saldo": self.saldo_formatado
         }
 
 
