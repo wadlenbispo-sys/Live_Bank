@@ -65,6 +65,14 @@ class contacorrente(Conta):
    def registrar_transacao(self, descricao: str, valor: float):
        data_hora = datetime.now().strftime("%d/%m/%Y %H:%M")
        self.extrato.append(f"[{data_hora}] {descricao}: R$ {valor:.2f}")
+      
+# classe responsavel pelas operações da conta poupança.
+class contapoupanca(Conta):
+
+    def __init__(self, numero, titular, saldo, taxa_mensal=0.005):
+        super().__init__(numero, titular, saldo)
+        self.taxa_mensal = taxa_mensal  # Ex: 0.005 equivale a 0,5% ao mês
+
 
 
 
