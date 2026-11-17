@@ -8,7 +8,7 @@ class Conta(ABC):
        self.cliente = cliente
        self.agencia = agencia
        self._saldo = saldo
-       self.extrato = []  # Aqui será guardado o histórico de movimentos
+       self.extrato = []  # Aqui será guardado o histórico de movimentos na conta
     
    @property
    def saldo(self) -> float:
@@ -28,40 +28,58 @@ class Conta(ABC):
        pass
 
    @abstractmethod
-   def sacar(self, valor):
+   def sacar(self, valor) -> float:
        pass
-      
+
+   # metodo que será herdado pelas classes contacorrente e contapoupança.
    def depositar(self, valor):
        if valor < 0:
           raise ValueError("acrescente um valor positivo para depositar")
        else:
           self.saldo += valor
-          self.extrato.append({"Cliente": self.cliente, "numero_da_conta": self.numero_da_conta, "D": valor, "Saldo_final": self.saldo})
+          self.registrar_transacao(descricao, valor)
+          return {"sucesso": True, "mensagem": f"{descricao} realizado com sucesso!", "novo_saldo": self.saldo_formatado}
+
+    @abstractmethod
+    def sacar(self, valor: float) -> dict:
+        pass
+
+    def to_dict(self) -> dict:
+        """Exporta todos os dados da conta para templates HTML ou respostas JSON."""
+        return {
+            "tipo": self.tipo,
+            "agencia": self.agencia,
+            "numero": self.numero_da_conta,
+            "cliente": self.cliente,
+            "saldo": self.saldo,
+            "saldo_formatado": self.saldo_formatado,
+            "extrato": self.extrato
+        }
 
 # classe reponsavel pelas operações da conta corrente.
 class contacorrente(Conta):
 
-   def __init__(self, numero, titular, saldo):
+   def __init__(self, numero, titular, saldo, limite: float = 500.0):
        super().__init__(numero, titular, saldo)
+       self.limite = limite
 
    @property
    def tipo(self) -> str:
        return "Conta Corrente"
 
    def sacar(self, valor):
-       if valor > self.saldo:
-          raise ValueError("valor maior do que já tem")
+       if valor <= 0:
+          raise ValueError("O valor precisar se positivo para sacar")
+          
+       if valor > (self.saldo + self.limite):
+            raise ValueError("Saldo e limite insuficientes para o saque.")
        else:
           self.saldo -= valor
-          self.extrato.append({"Cliente": self.cliente, "numero_da_conta": self.numero_da_conta, "S": valor, "saldo_final": self._saldo})
-          
-   def depositar(self, valor):
-       if valor < 0:
-          raise ValueError("acrescente um valor positivo para depositar")
-       else:
-          self.saldo += valor
-          self.extrato.append({"Cliente": self.cliente, "numero_da_conta": self.numero_da_conta, "S": valor, "saldo_final": self._saldo})
-          
+          self.registrar_transacao("Saque", -valor)
+          return {"sucesso": True, "mensagem": "Saque realizado com sucesso!", "novo_saldo": self.saldo_formatado}
+
+
+
    # responsavel por registrar as tansações acrescentando a hora e descrição do que foi feito.
    def registrar_transacao(self, descricao: str, valor: float):
        data_hora = datetime.now().strftime("%d/%m/%Y %H:%M")
@@ -72,7 +90,7 @@ class contapoupanca(Conta):
 
     def __init__(self, numero, titular, saldo, taxa_mensal=0.005):
         super().__init__(numero, titular, saldo)
-        self.taxa_mensal = taxa_mensal  # Ex: 0.005 equivale a 0,5% ao mês
+        self.taxa_mensal = taxa_mensal   #0.005 equivale a 0,5% ao mês
 
     @property
     def tipo(self) -> str:
@@ -85,9 +103,10 @@ class contapoupanca(Conta):
             raise ValueError("Saldo insuficiente para o saque.")
         else:
            self.saldo -= valor
-           self.extrato.append({"Cliente": self.cliente, "numero_da_conta": self.numero_da_conta, "S": valor, "saldo_final": self._saldo})
            self.registrar_transacao("Saque", -valor)
-           
+           return {"sucesso": True, "mensagem": "Saque realizado com sucesso!", "novo_saldo": self.saldo_formatado}
+
+   
     # responsavel por registrar as tansações acrescentando a hora e descrição do que foi feito.
     def registrar_transacao(self, descricao: str, valor: float):
         data_hora = datetime.now().strftime("%d/%m/%Y %H:%M")
