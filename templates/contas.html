@@ -3,7 +3,7 @@
 {% block conteudo %}
 {% set rotulos = {'saque': 'Sacar', 'deposito': 'Depositar', 'transferencia': 'Transferir', 'rendimento': 'Render (%)'} %}
 <h1>Contas</h1>
-<p class="subtitle">Abra contas e faça operações conforme o tipo de cada uma.</p>
+<p class="subtitle">Um cliente pode ter várias contas; cada conta pertence a um único cliente.</p>
 
 <section class="painel" aria-labelledby="nova-conta">
     <h2 id="nova-conta">Nova conta</h2>
@@ -20,8 +20,8 @@
             </select>
         </label>
         <label>Agência
-            <select name="agencia_cnpj" required>
-                {% for cnpj, a in agencias.items() %}<option value="{{ cnpj }}">{{ a.codigo }} - {{ a.cidade }}/{{ a.estado }}</option>{% endfor %}
+            <select name="agencia_codigo" required>
+                {% for codigo, a in agencias.items() %}<option value="{{ codigo }}">{{ a.codigo }} - {{ a.cidade }}/{{ a.estado }}</option>{% endfor %}
             </select>
         </label>
         <label>Nº da conta <input name="numero_conta" required></label>
