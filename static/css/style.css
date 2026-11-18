@@ -1,25 +1,27 @@
 :root {
-    --bg: #eef1f4; --surface: #ffffff; --ink: #14213d; --muted: #5b6678;
-    --line: #f5b0b0; --accent: #ed1c24; --on-accent: #ffffff;
-    --positive: #ed1c24; --negative: #b3261e;
-    --ok-bg: #e3f4f1; --erro-bg: #fbe9e7;
+    --bg: #f1f6fd; --surface: #ffffff; --ink: #152b45; --muted: #536982;
+    --line: #d4e1f0; --accent: #1769c2; --on-accent: #ffffff;
+    --nav-bg: #174f91; --nav-link: #eaf3ff;
+    --positive: #13795b; --negative: #b3261e;
+    --ok-bg: #e5f4ee; --erro-bg: #fbe9e7;
 }
 @media (prefers-color-scheme: dark) {
     :root {
-        --bg: #0f1624; --surface: #172033; --ink: #e8edf5; --muted: #98a3b5;
-        --line: #2a3650; --accent: #4fd1c5; --on-accent: #0f1624;
-        --positive: #4fd1c5; --negative: #ff8a80;
-        --ok-bg: #12332f; --erro-bg: #3b1f1d;
+        --bg: #0d1d30; --surface: #142943; --ink: #f1f6fd; --muted: #b5c8de;
+        --line: #2b4563; --accent: #75b2f3; --on-accent: #10243a;
+        --nav-bg: #102f52; --nav-link: #eaf3ff;
+        --positive: #6bd2a8; --negative: #ff9a91;
+        --ok-bg: #16392f; --erro-bg: #472725;
     }
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink);
        font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; line-height: 1.5; }
-nav { background: var(--surface); border-bottom: 1px solid var(--line); }
+nav { background: var(--nav-bg); border-bottom: 1px solid var(--line); }
 nav .interno { max-width: 960px; margin: 0 auto; padding: 0 1.25rem; display: flex; gap: 0.25rem; flex-wrap: wrap; }
-nav a { padding: 0.9rem 0.75rem; color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; }
-nav a:hover { color: var(--ink); }
-nav a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--accent); font-weight: 500; }
+nav a { padding: 0.9rem 0.75rem; color: var(--nav-link); text-decoration: none; border-bottom: 2px solid transparent; }
+nav a:hover { color: #ffffff; background: rgb(255 255 255 / 10%); }
+nav a[aria-current="page"] { color: #ffffff; border-bottom-color: #ffffff; font-weight: 600; }
 main { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
 h1 { font-size: 1.75rem; font-weight: 600; margin: 0 0 0.25rem; }
 h2 { font-size: 1.125rem; font-weight: 600; margin: 0 0 1rem; }
@@ -59,3 +61,4 @@ tfoot td { border-bottom: 0; font-weight: 600; }
 .vazio { color: var(--muted); margin: 0; }
 .operacoes { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
 .operacoes input { width: 6.5rem; }
+
