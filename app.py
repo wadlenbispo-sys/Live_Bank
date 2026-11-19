@@ -73,9 +73,9 @@ def salvar_dados(dados):
 def somente_digitos(texto):
     return re.sub(r"\D", "", texto or "")
 
-
-def validar_cpf(cpf):
-    return len(cpf) == 11 and cpf.isdigit() and cpf != cpf[0] * 11
+#bloqueando validação
+#def validar_cpf(cpf):
+   # return len(cpf) == 11 and cpf.isdigit() and cpf != cpf[0] * 11
 
 
 def ler_valor():
