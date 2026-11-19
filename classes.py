@@ -96,7 +96,7 @@ class Conta(ABC):
 
 
 class contacorrente(Conta):
-    def __init__(self, numero, titular, saldo, limite: float = 500.0):
+    def __init__(self, numero, titular, saldo: float, limite: float = 500.0, ):
         super().__init__(numero, titular, saldo)
         self.limite = limite
 
@@ -104,7 +104,7 @@ class contacorrente(Conta):
     def tipo(self) -> str:
         return "Conta Corrente"
 
-    def sacar(self, valor):
+    def sacar(self, valor: float): -> float:
         if valor <= 0:
             raise ValueError("O valor precisar se positivo para sacar")
         if valor > self.saldo + self.limite:
