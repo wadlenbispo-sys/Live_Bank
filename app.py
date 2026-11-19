@@ -107,6 +107,12 @@ def formatar_cpf(valor):
         return cpf
     return f"{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:]}"
 
+@app.template_filter("telefone")
+def formatar_telefone(valor):
+    telefone = str(valor)
+    if len(telefone) != 11:
+        return telefone
+    return f"({telefone[:2]}) {telefone[2:7]}-{telefone[7:]}"
 
 @app.route("/")
 @app.route("/dashboard")
@@ -145,18 +151,11 @@ def clientes():
 def cadastrar_cliente():
     nome = request.form.get("nome", "").strip()
     cpf = somente_digitos(request.form.get("cpf"))
-    senha = request.form.get("senha", "")
-    cidade = request.form.get("cidade", "").strip()
-    estado = request.form.get("estado", "").strip().upper()
+    telefone = request.form.get("telefone", "")
+    email = request.form.get("email", "").strip()
 
-    if not nome or not cidade or len(estado) != 2:
-        erro("Preencha nome, cidade e UF (2 letras).")
-        return redirect(url_for("clientes"))
-    if not validar_cpf(cpf):
-        erro("CPF inválido. Tente novamente.")
-        return redirect(url_for("clientes"))
-    if not 4 <= len(senha) <= 15:
-        erro("A senha deve ter de 4 a 15 caracteres.")
+    if not nome or not telefone or not email:
+        erro("Preencha nome, telefone e Email.")
         return redirect(url_for("clientes"))
 
     dados = carregar_dados()
@@ -164,7 +163,7 @@ def cadastrar_cliente():
         erro("CPF já cadastrado.")
         return redirect(url_for("clientes"))
 
-    cliente = Cliente(nome, cpf, senha, cidade, estado)
+    cliente = Cliente(nome, cpf, telefone, email)
     dados["clientes"][cpf] = cliente.converter_para_dicionario()
     dados["clientes"] = dict(
         sorted(dados["clientes"].items(), key=lambda item: item[1]["nome"].casefold())
