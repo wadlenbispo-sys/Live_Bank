@@ -99,8 +99,8 @@ def moeda(valor):
     texto = f"{float(valor):,.2f}"
     return "R$ " + texto.replace(",", "X").replace(".", ",").replace("X", ".")
 
-
-@app.template_filter("cpf")
+# bloqueando a validação do cpf
+#@app.template_filter("cpf")
 def formatar_cpf(valor):
     cpf = str(valor)
     if len(cpf) != 11:
