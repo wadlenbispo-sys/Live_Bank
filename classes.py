@@ -10,16 +10,14 @@ from datetime import datetime
 class Cliente:
     nome: str
     cpf: str
-    senha: str
-    cidade: str
-    estado: str
+    telefone: str
+    email: str
 
     def converter_para_dicionario(self) -> dict[str, str]:
         return {
             "nome": self.nome,
-            "senha": self.senha,
-            "cidade": self.cidade,
-            "estado": self.estado,
+            "telefone": self.telefone,
+            "email": self.email
         }
 
 
@@ -104,7 +102,7 @@ class contacorrente(Conta):
     def tipo(self) -> str:
         return "Conta Corrente"
 
-    def sacar(self, valor: float): -> float:
+    def sacar(self, valor: float) -> float:
         if valor <= 0:
             raise ValueError("O valor precisar se positivo para sacar")
         if valor > self.saldo + self.limite:
