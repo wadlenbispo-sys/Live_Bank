@@ -1,46 +1,16 @@
 {
   "clientes": {
-    "79743143548": {
-      "nome": "Alice Portugal",
-      "senha": "Iron",
-      "cidade": "Salvador",
-      "estado": "BA"
+    "10000006483": {
+      "nome": "Arlindo Chinaglia",
+      "cpf": "10000006483",
+      "telefone": "(61) 3215-5966",
+      "email": "dep.arlindochinaglia@camara.leg.br"
     },
-    "00132802520": {
-      "nome": "Capitão Alden",
-      "senha": "Sulfur",
-      "cidade": "Salvador",
-      "estado": "BA"
-    },
-    "61912277522": {
-      "nome": "Claudio Cajado",
-      "senha": "Chromium",
-      "cidade": "Salvador",
-      "estado": "BA"
-    },
-    "05146131490": {
-      "nome": "Dilvanda Faro",
-      "senha": "Neon",
-      "cidade": "Bujaru",
-      "estado": "PA"
-    },
-    "74118568004": {
-      "nome": "Giovani Cherini",
-      "senha": "Thallium",
-      "cidade": "Soledade",
-      "estado": "RS"
-    },
-    "80034328718": {
-      "nome": "Jack Rocha",
-      "senha": "Titanium",
-      "cidade": "Colatina",
-      "estado": "ES"
-    },
-    "12356779076": {
-      "nome": "ti",
-      "senha": "1234",
-      "cidade": "sergipe",
-      "estado": "SE"
+    "12207001417": {
+      "nome": "Gabriel Nunes",
+      "cpf": "12207001417",
+      "telefone": "(61) 3215-5732",
+      "email": "dep.gabrielnunes@camara.leg.br"
     }
   },
   "agencias": {
@@ -51,26 +21,19 @@
     }
   },
   "contas": {
-    "1169880-8": {
-      "numero_conta": "1169880-8",
+    "0073766-6": {
+      "numero_conta": "0073766-6",
       "tipo": "corrente",
-      "cliente_cpf": "79743143548",
-      "saldo": 1550000.0,
-      "agencia_codigo": "0001"
-    },
-    "05747529-9": {
-      "numero_conta": "05747529-9",
-      "tipo": "corrente",
-      "cliente_cpf": "61912277522",
-      "saldo": 1357100.0,
-      "agencia_codigo": "0001"
-    },
-    "1234": {
-      "numero_conta": "1234",
-      "tipo": "corrente",
-      "cliente_cpf": "12356779076",
+      "cliente_cpf": "10000006483",
       "agencia_codigo": "0001",
-      "saldo": 1000050.0
+      "saldo": 2500000.0
+    },
+    "37510315-7": {
+      "numero_conta": "37510315-7",
+      "tipo": "corrente",
+      "cliente_cpf": "12207001417",
+      "agencia_codigo": "0001",
+      "saldo": 1790000.0
     }
   }
 }
