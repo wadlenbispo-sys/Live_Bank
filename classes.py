@@ -16,6 +16,7 @@ class Cliente:
     def converter_para_dicionario(self) -> dict[str, str]:
         return {
             "nome": self.nome,
+            "cpf": self.cpf,
             "telefone": self.telefone,
             "email": self.email
         }
