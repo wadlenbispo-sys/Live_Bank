@@ -114,6 +114,11 @@ def formatar_telefone(valor):
         return telefone
     return f"({telefone[:2]}) {telefone[2:7]}-{telefone[7:]}"
 
+@app.template_filter("email")
+def formatar_email(valor):
+    email = str(valor)
+    return email
+
 @app.route("/")
 @app.route("/dashboard")
 @app.route("/Live-Bank")
