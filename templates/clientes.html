@@ -9,9 +9,8 @@
     <form class="campos" method="post" action="{{ url_for('cadastrar_cliente') }}">
         <label>Nome <input name="nome" required></label>
         <label>CPF <input name="cpf" inputmode="numeric" placeholder="somente números" required></label>
-        <label>Senha (4 a 15 caracteres) <input name="senha" type="password" minlength="4" maxlength="15" required></label>
-        <label>Cidade <input name="cidade" required></label>
-        <label>UF <input name="estado" maxlength="2" required></label>
+        <label>Telefone <input name="telefone" inputmode="numeric" placeholder="somente números" required></label>
+        <label>Email <input name="email" type="email" required></label>
         <button type="submit">Cadastrar cliente</button>
     </form>
 </section>
@@ -21,13 +20,14 @@
     {% if clientes %}
     <div class="tabela-wrap">
         <table>
-            <thead><tr><th>Nome</th><th>CPF</th><th>Cidade</th><th></th></tr></thead>
+            <thead><tr><th>Nome</th><th>CPF</th><th>Telefone</th><th>Email</th><th></th></tr></thead>
             <tbody>
-                {% for cpf, c in clientes.items() %}
+                {% for cpf, cliente in clientes.items() %}
                 <tr>
-                    <td>{{ c.nome }}</td>
-                    <td>{{ cpf | cpf }}</td>
-                    <td>{{ c.cidade }}/{{ c.estado }}</td>
+                    <td>{{ cliente.nome }}</td>
+                    <td>{{ cliente.cpf }}</td>
+                    <td>{{ cliente.telefone }}</td>
+                    <td>{{ cliente.email }}</td>
                     <td class="num">
                         <form method="post" action="{{ url_for('deletar_cliente', cpf=cpf) }}">
                             <button class="perigo" type="submit">Excluir</button>
